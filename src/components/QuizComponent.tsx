@@ -70,6 +70,62 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       correctAnswer: 2,
       explanation: 'Routers operate at Layer 3 (Network layer) of the OSI model, making routing decisions based on IP addresses.',
       difficulty: 'medium'
+    },
+    {
+      id: '6',
+      question: 'What does DNS stand for?',
+      options: ['Dynamic Network Service', 'Domain Name System', 'Digital Network Security', 'Data Network Standard'],
+      correctAnswer: 1,
+      explanation: 'DNS (Domain Name System) translates domain names to IP addresses so browsers can load internet resources.',
+      difficulty: 'easy'
+    },
+    {
+      id: '7',
+      question: 'Which of the following is a stateless protocol?',
+      options: ['FTP', 'Telnet', 'HTTP', 'SSH'],
+      correctAnswer: 2,
+      explanation: 'HTTP is stateless, meaning each request is independent and the server maintains no information about past client requests.',
+      difficulty: 'medium'
+    },
+    {
+      id: '8',
+      question: 'What is the purpose of a CAPTCHA?',
+      options: ['Encrypt data', 'Distinguish humans from bots', 'Block malware', 'Manage passwords'],
+      correctAnswer: 1,
+      explanation: 'CAPTCHA (Completely Automated Public Turing test to tell Computers and Humans Apart) is designed to determine whether the user is human or a bot.',
+      difficulty: 'easy'
+    },
+    {
+      id: '9',
+      question: 'Which encryption algorithm is considered obsolete and insecure?',
+      options: ['AES', 'RSA', 'DES', 'SHA-256'],
+      correctAnswer: 2,
+      explanation: 'DES (Data Encryption Standard) is now considered insecure due to its small key size (56 bits) and has been replaced by more secure algorithms like AES.',
+      difficulty: 'hard'
+    },
+    {
+      id: '10',
+      question: 'What is a honeypot in cybersecurity?',
+      options: ['A type of malware', 'A decoy system to attract attackers', 'An encryption method', 'A password manager'],
+      correctAnswer: 1,
+      explanation: 'A honeypot is a security mechanism that creates a deliberate vulnerability to attract and detect attackers, studying their behavior and potentially identifying new threats.',
+      difficulty: 'medium'
+    },
+    {
+      id: '11', 
+      question: 'What is the main purpose of a VPN?',
+      options: ['Block all ads', 'Increase internet speed', 'Create a secure, encrypted connection', 'Store passwords securely'],
+      correctAnswer: 2,
+      explanation: 'A Virtual Private Network (VPN) establishes an encrypted connection over a less secure network, providing privacy and anonymity by hiding the user\'s internet protocol (IP) address.',
+      difficulty: 'easy'
+    },
+    {
+      id: '12',
+      question: 'What is a zero-day exploit?',
+      options: ['An attack that occurs at midnight', 'An attack that targets vulnerabilities with no patches', 'A virus that deletes all data', 'A DDoS attack that lasts for 24 hours'],
+      correctAnswer: 1,
+      explanation: 'A zero-day exploit targets a previously unknown vulnerability in software or hardware, for which no patch exists yet, giving developers "zero days" to address it before it\'s exploited.',
+      difficulty: 'hard'
     }
   ];
   

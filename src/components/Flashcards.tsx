@@ -56,6 +56,55 @@ const Flashcards: React.FC<FlashcardsProps> = ({ className }) => {
       answer: 'A Virtual Local Area Network (VLAN) is used to logically segment a network without altering its physical topology, improving security and reducing broadcast domains.',
       category: 'Networking',
       difficulty: 'medium'
+    },
+    {
+      id: '6',
+      question: 'What is Cross-Site Scripting (XSS)?',
+      answer: 'XSS is a security vulnerability that allows attackers to inject client-side scripts into web pages viewed by other users, potentially stealing session data or cookies.',
+      category: 'Web Security',
+      difficulty: 'medium'
+    },
+    {
+      id: '7',
+      question: 'What is the difference between IDS and IPS?',
+      answer: 'An Intrusion Detection System (IDS) monitors network traffic for suspicious activity and issues alerts, while an Intrusion Prevention System (IPS) actively blocks or prevents detected threats.',
+      category: 'Network Security',
+      difficulty: 'medium'
+    },
+    {
+      id: '8',
+      question: 'What is the principle of least privilege?',
+      answer: 'The principle of least privilege means giving a user only the access rights and resources absolutely required to complete their tasks and nothing more.',
+      category: 'Security Fundamentals',
+      difficulty: 'easy'
+    },
+    {
+      id: '9',
+      question: 'What is a zero-day vulnerability?',
+      answer: 'A zero-day vulnerability is a software security flaw that is unknown to the parties responsible for patching or otherwise fixing the flaw, and has not yet been patched.',
+      category: 'Security Fundamentals',
+      difficulty: 'hard'
+    },
+    {
+      id: '10',
+      question: 'What is the function of a firewall?',
+      answer: 'A firewall is a network security device or software that monitors and filters incoming and outgoing network traffic based on an organization\'s security policies.',
+      category: 'Network Security',
+      difficulty: 'easy'
+    },
+    {
+      id: '11',
+      question: 'What is the difference between authentication and authorization?',
+      answer: 'Authentication verifies who a user is, while authorization determines what resources a user has access to.',
+      category: 'Security Fundamentals',
+      difficulty: 'easy'
+    },
+    {
+      id: '12',
+      question: 'What is a SQL injection attack?',
+      answer: 'SQL injection is a code injection technique that exploits vulnerabilities in web applications by inserting malicious SQL statements into entry fields for execution.',
+      category: 'Web Security',
+      difficulty: 'medium'
     }
   ];
   
