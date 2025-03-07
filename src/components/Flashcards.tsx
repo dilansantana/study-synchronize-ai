@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,7 +21,6 @@ const Flashcards: React.FC<FlashcardsProps> = ({ className }) => {
   const [flipped, setFlipped] = useState(false);
   const [knownCards, setKnownCards] = useState<Set<string>>(new Set());
   
-  // Mock flashcard data
   const flashcards: FlashcardData[] = [
     {
       id: '1',
@@ -236,7 +234,8 @@ const Flashcards: React.FC<FlashcardsProps> = ({ className }) => {
         </button>
       </div>
       
-      <style jsx>{`
+      <style>
+        {`
         .perspective-1000 {
           perspective: 1000px;
         }
@@ -252,7 +251,8 @@ const Flashcards: React.FC<FlashcardsProps> = ({ className }) => {
         .rotate-y-180 {
           transform: rotateY(180deg);
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };
