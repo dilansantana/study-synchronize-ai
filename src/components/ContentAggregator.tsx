@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Search, Youtube, FileText, Globe, MessageSquare, Filter, ArrowRight, Clock, Star } from 'lucide-react';
+import { Search, Youtube, FileText, Globe, MessageSquare, Filter } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import AnimatedTransition from './AnimatedTransition';
 import { useToast } from "@/hooks/use-toast";
@@ -19,10 +20,12 @@ interface ContentItem {
 const ContentAggregator: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchedCertification, setSearchedCertification] = useState('');
   const { toast } = useToast();
   
   // Mock content items
-  const contentItems: ContentItem[] = [
+  const initialContentItems: ContentItem[] = [
     {
       id: '1',
       title: 'CompTIA Security+ Full Course',
@@ -76,6 +79,91 @@ const ContentAggregator: React.FC = () => {
       rating: 4.6
     }
   ];
+  
+  // Additional resources for different certifications
+  const additionalResources = {
+    aws: [
+      {
+        id: 'aws1',
+        title: 'AWS Certified Solutions Architect Course',
+        source: 'youtube',
+        description: 'Comprehensive course covering all AWS Solutions Architect exam objectives.',
+        url: 'https://www.youtube.com/watch?v=Ia-UEYYR44s',
+        duration: '10h 15m',
+        author: 'freeCodeCamp.org',
+        date: '2023-06-12',
+        rating: 4.9
+      },
+      {
+        id: 'aws2',
+        title: 'AWS Certified Cloud Practitioner Study Guide',
+        source: 'document',
+        description: 'Official study material with practice questions for AWS Cloud Practitioner.',
+        url: 'https://aws.amazon.com/certification/certified-cloud-practitioner/',
+        author: 'Amazon Web Services',
+        date: '2023-07-20',
+        rating: 4.7
+      },
+      {
+        id: 'aws3',
+        title: 'How I passed all 3 AWS associate certs in 3 months',
+        source: 'forum',
+        description: 'Personal experience and study strategy for AWS certifications.',
+        url: 'https://www.reddit.com/r/AWSCertifications/',
+        author: 'r/AWSCertifications',
+        date: '2023-05-05',
+        rating: 4.5
+      }
+    ],
+    okta: [
+      {
+        id: 'okta1',
+        title: 'Okta Certified Professional Exam Prep',
+        source: 'youtube',
+        description: 'Preparation course for the Okta Certified Professional exam.',
+        url: 'https://www.youtube.com/watch?v=8jU_SrkVX8E',
+        duration: '4h 30m',
+        author: 'Okta Developer',
+        date: '2023-08-10',
+        rating: 4.6
+      },
+      {
+        id: 'okta2',
+        title: 'Okta Identity and Access Management Guide',
+        source: 'document',
+        description: 'Comprehensive guide to Okta IAM concepts and implementation.',
+        url: 'https://www.okta.com/resources/whitepaper/identity-and-access-management-guide/',
+        author: 'Okta Inc.',
+        date: '2023-04-15',
+        rating: 4.8
+      }
+    ],
+    azure: [
+      {
+        id: 'azure1',
+        title: 'Microsoft Azure AZ-900 Certification Course',
+        source: 'youtube',
+        description: 'Full course for Azure Fundamentals certification.',
+        url: 'https://www.youtube.com/watch?v=NKEFWyqJ5XA',
+        duration: '3h 45m',
+        author: 'Microsoft Learn',
+        date: '2023-09-05',
+        rating: 4.9
+      },
+      {
+        id: 'azure2',
+        title: 'Azure Administrator Study Notes AZ-104',
+        source: 'article',
+        description: 'Detailed study notes for the Azure Administrator certification.',
+        url: 'https://docs.microsoft.com/en-us/learn/certifications/azure-administrator/',
+        author: 'Microsoft',
+        date: '2023-07-14',
+        rating: 4.7
+      }
+    ]
+  };
+
+  const [contentItems, setContentItems] = useState<ContentItem[]>(initialContentItems);
 
   const filters = [
     { id: 'all', label: 'All Sources', icon: <Globe className="w-4 h-4" /> },
@@ -96,6 +184,84 @@ const ContentAggregator: React.FC = () => {
     
     return matchesSearch && matchesFilter;
   });
+
+  const handleSearchForCertification = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!searchQuery.trim()) {
+      toast({
+        title: "Search required",
+        description: "Please enter a certification to search for",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsSearching(true);
+    setSearchedCertification(searchQuery);
+    
+    // Simulate an API call to gather resources
+    setTimeout(() => {
+      const certKey = searchQuery.toLowerCase();
+      let newResources: ContentItem[] = [];
+      
+      // Check if we have predefined resources for this certification
+      if (certKey.includes('aws')) {
+        newResources = additionalResources.aws;
+      } else if (certKey.includes('okta')) {
+        newResources = additionalResources.okta;
+      } else if (certKey.includes('azure')) {
+        newResources = additionalResources.azure;
+      }
+      
+      // If no predefined resources, generate generic ones based on search query
+      if (newResources.length === 0) {
+        const capitalizedSearch = searchQuery.charAt(0).toUpperCase() + searchQuery.slice(1);
+        newResources = [
+          {
+            id: `gen1-${Date.now()}`,
+            title: `${capitalizedSearch} Certification Complete Guide`,
+            source: 'youtube',
+            description: `Comprehensive guide to passing the ${capitalizedSearch} certification exam.`,
+            url: 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery + ' certification'),
+            duration: '6h 20m',
+            author: 'Tech Tutorials',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.5
+          },
+          {
+            id: `gen2-${Date.now()}`,
+            title: `${capitalizedSearch} Study Materials and Resources`,
+            source: 'document',
+            description: `Curated study materials for ${capitalizedSearch} certification preparation.`,
+            url: 'https://www.google.com/search?q=' + encodeURIComponent(searchQuery + ' certification study guide'),
+            author: 'Certification Guides',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.3
+          },
+          {
+            id: `gen3-${Date.now()}`,
+            title: `${capitalizedSearch} Certification Exam Tips`,
+            source: 'forum',
+            description: `Community discussion on how to pass the ${capitalizedSearch} certification exam.`,
+            url: 'https://www.reddit.com/search/?q=' + encodeURIComponent(searchQuery + ' certification'),
+            author: 'r/certifications',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.2
+          }
+        ];
+      }
+      
+      // Update content items with new resources
+      setContentItems([...newResources, ...initialContentItems]);
+      setIsSearching(false);
+      
+      toast({
+        title: "Resources found",
+        description: `We've gathered resources for ${searchQuery} certification. Displaying results now.`,
+      });
+    }, 2000);
+  };
 
   const getSourceIcon = (source: string) => {
     switch (source) {
@@ -135,13 +301,23 @@ const ContentAggregator: React.FC = () => {
       <AnimatedTransition animation="slide" delay={100} className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <input
-            type="text"
-            placeholder="Search for topics, keywords, or concepts..."
-            className="h-10 w-full rounded-md border border-input bg-transparent pl-10 pr-4 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          <form onSubmit={handleSearchForCertification} className="flex">
+            <input
+              type="text"
+              placeholder="Search for certification resources (e.g., AWS, Okta, Azure)..."
+              className="h-10 w-full rounded-md border border-input bg-transparent pl-10 pr-4 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              disabled={isSearching}
+            />
+            <button 
+              type="submit" 
+              className="ml-2 h-10 px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium disabled:opacity-50 disabled:pointer-events-none"
+              disabled={isSearching}
+            >
+              {isSearching ? "Searching..." : "Find Resources"}
+            </button>
+          </form>
         </div>
         
         <div className="flex items-center space-x-2 overflow-x-auto pb-2 sm:pb-0">
@@ -167,6 +343,13 @@ const ContentAggregator: React.FC = () => {
           ))}
         </div>
       </AnimatedTransition>
+
+      {searchedCertification && (
+        <AnimatedTransition animation="fade" className="p-4 rounded-md bg-secondary">
+          <p className="font-medium">Showing resources for: <span className="text-primary">{searchedCertification}</span></p>
+          <p className="text-sm text-muted-foreground mt-1">Browse the curated resources below or refine your search.</p>
+        </AnimatedTransition>
+      )}
 
       <div className="space-y-4">
         {filteredContent.length > 0 ? (
