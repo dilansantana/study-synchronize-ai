@@ -1,36 +1,63 @@
+
 import React, { useState } from 'react';
 import { cn } from "@/lib/utils";
 import { BarChart, Calendar, Clock, BookOpen, Award, Search, Loader2 } from 'lucide-react';
 import AnimatedTransition from './AnimatedTransition';
 import { useToast } from "@/hooks/use-toast";
+import { UserProgress, useUserProgress } from '@/utils/progressUtils';
 
 interface DashboardProps {
   className?: string;
   userName?: string;
+  userId?: string;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
   className,
   userName = "User",
+  userId = "default-user"
 }) => {
   const { toast } = useToast();
   const [certificationQuery, setCertificationQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  
+  // Use our progress tracking hook
+  const { 
+    progress, 
+    addCertification, 
+    logStudyTime,
+    completeTopics,
+    recordActivity
+  } = useUserProgress(userId);
 
-  // Mock data for dashboard widgets
+  // Convert stats from progress data
   const stats = [
-    { label: 'Study Hours', value: '14.5', icon: <Clock className="w-5 h-5" />, change: '+2.5 hrs this week' },
-    { label: 'Completed Topics', value: '18', icon: <BookOpen className="w-5 h-5" />, change: '+3 since last week' },
-    { label: 'Quiz Score', value: '86%', icon: <Award className="w-5 h-5" />, change: '+4% improvement' },
-    { label: 'Streak', value: '7 days', icon: <Calendar className="w-5 h-5" />, change: 'Keep it up!' },
-  ];
-
-  // Mock data for recent activities
-  const recentActivities = [
-    { id: 1, activity: 'Completed Network Security module', time: '2 hours ago' },
-    { id: 2, activity: 'Scored 92% on Encryption quiz', time: '1 day ago' },
-    { id: 3, activity: 'Added 24 new flashcards', time: '2 days ago' },
-    { id: 4, activity: 'Started CCNA certification path', time: '4 days ago' },
+    { 
+      label: 'Study Hours', 
+      value: `${progress.studyHours}`, 
+      icon: <Clock className="w-5 h-5" />, 
+      change: '+2.5 hrs this week',
+      action: () => logStudyTime(0.5) // Log 30 minutes when clicked
+    },
+    { 
+      label: 'Completed Topics', 
+      value: `${progress.completedTopics}`, 
+      icon: <BookOpen className="w-5 h-5" />, 
+      change: '+3 since last week',
+      action: () => completeTopics(1) // Complete one topic when clicked
+    },
+    { 
+      label: 'Quiz Score', 
+      value: `${progress.quizScore}%`, 
+      icon: <Award className="w-5 h-5" />, 
+      change: '+4% improvement' 
+    },
+    { 
+      label: 'Streak', 
+      value: `${progress.streak} days`, 
+      icon: <Calendar className="w-5 h-5" />, 
+      change: 'Keep it up!' 
+    },
   ];
 
   // Handle gathering resources for a certification
@@ -51,6 +78,10 @@ const Dashboard: React.FC<DashboardProps> = ({
     // Simulate an API call to gather resources
     setTimeout(() => {
       setIsSearching(false);
+      
+      // Add certification to user progress
+      addCertification(certificationQuery);
+      
       toast({
         title: "Resources gathered",
         description: `We've started gathering resources for ${certificationQuery}. Check the Learning page for updates.`,
@@ -58,6 +89,9 @@ const Dashboard: React.FC<DashboardProps> = ({
       
       // Reset the input after searching
       setCertificationQuery('');
+      
+      // Record this activity
+      recordActivity(`Started gathering resources for ${certificationQuery}`);
     }, 2000);
   };
 
@@ -71,10 +105,28 @@ const Dashboard: React.FC<DashboardProps> = ({
         
         <AnimatedTransition animation="slide" delay={200}>
           <div className="mt-4 md:mt-0 flex space-x-2">
-            <button className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-primary text-white hover:bg-primary/90 transition-colors">
+            <button 
+              className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-primary text-white hover:bg-primary/90 transition-colors"
+              onClick={() => {
+                logStudyTime(0.5);
+                toast({
+                  title: "Study session started",
+                  description: "30 minutes added to your study time.",
+                });
+              }}
+            >
               Resume Learning
             </button>
-            <button className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-secondary hover:bg-secondary/80 text-foreground transition-colors">
+            <button 
+              className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-secondary hover:bg-secondary/80 text-foreground transition-colors"
+              onClick={() => {
+                recordActivity("Started a practice quiz");
+                toast({
+                  title: "Practice quiz ready",
+                  description: "Good luck with your practice quiz!",
+                });
+              }}
+            >
               Practice Quiz
             </button>
           </div>
@@ -119,7 +171,8 @@ const Dashboard: React.FC<DashboardProps> = ({
         {stats.map((stat, i) => (
           <div 
             key={stat.label} 
-            className="rounded-lg border bg-card p-6 shadow-sm transition-all hover:shadow-md"
+            className="rounded-lg border bg-card p-6 shadow-sm transition-all hover:shadow-md cursor-pointer"
+            onClick={stat.action}
           >
             <div className="flex items-center space-x-2">
               <div className="rounded-full p-2 bg-primary/10 text-primary">
@@ -152,7 +205,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           <div className="p-6">
             <h3 className="text-lg font-medium mb-4">Recent Activity</h3>
             <div className="space-y-4">
-              {recentActivities.map((activity) => (
+              {progress.recentActivities.map((activity) => (
                 <div key={activity.id} className="flex justify-between items-start pb-3 border-b border-border last:border-0 last:pb-0">
                   <div>
                     <p className="text-sm font-medium">{activity.activity}</p>
