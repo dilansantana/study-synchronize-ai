@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
-import { Search, Youtube, FileText, Globe, MessageSquare, Filter } from 'lucide-react';
+import { Search, Youtube, FileText, Globe, MessageSquare, Filter, ArrowRight, Clock, Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import AnimatedTransition from './AnimatedTransition';
+import { useToast } from "@/hooks/use-toast";
 
 interface ContentItem {
   id: string;
@@ -19,6 +19,7 @@ interface ContentItem {
 const ContentAggregator: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const { toast } = useToast();
   
   // Mock content items
   const contentItems: ContentItem[] = [
@@ -27,7 +28,7 @@ const ContentAggregator: React.FC = () => {
       title: 'CompTIA Security+ Full Course',
       source: 'youtube',
       description: 'A comprehensive guide to Security+ certification covering all exam objectives.',
-      url: '#',
+      url: 'https://www.youtube.com/watch?v=9NE33fpQuw8',
       duration: '8h 45m',
       author: 'Professor Messer',
       date: '2023-01-15',
@@ -38,7 +39,7 @@ const ContentAggregator: React.FC = () => {
       title: 'Network+ Study Guide: OSI Model Explained',
       source: 'article',
       description: 'Detailed breakdown of the OSI Model with diagrams and examples.',
-      url: '#',
+      url: 'https://www.comptia.org/training/books/network-n10-008-study-guide',
       author: 'TechExams.net',
       date: '2023-03-22',
       rating: 4.5
@@ -48,7 +49,7 @@ const ContentAggregator: React.FC = () => {
       title: 'How to pass CCNA on first attempt? Tips and resources',
       source: 'forum',
       description: 'Community discussion with valuable tips and recommended resources.',
-      url: '#',
+      url: 'https://www.reddit.com/r/ccna/',
       author: 'r/ccna',
       date: '2023-04-10',
       rating: 4.2
@@ -58,7 +59,7 @@ const ContentAggregator: React.FC = () => {
       title: 'CompTIA A+ 220-1101 & 220-1102 Official Study Guide',
       source: 'document',
       description: 'Official study material with practice questions and explanations.',
-      url: '#',
+      url: 'https://www.comptia.org/training/books/a-220-1101-220-1102-study-guide',
       author: 'CompTIA',
       date: '2023-02-05',
       rating: 4.7
@@ -68,7 +69,7 @@ const ContentAggregator: React.FC = () => {
       title: 'Security+ SY0-601 - Cryptography Concepts',
       source: 'youtube',
       description: 'Learn about symmetric and asymmetric encryption methods.',
-      url: '#',
+      url: 'https://www.youtube.com/watch?v=GZ1bLT_uvYM',
       duration: '45m',
       author: 'IT Dojo',
       date: '2023-05-18',
@@ -109,6 +110,17 @@ const ContentAggregator: React.FC = () => {
       default:
         return <Globe className="w-4 h-4 text-gray-500" />;
     }
+  };
+
+  const handleOpenResource = (item: ContentItem) => {
+    // Open the URL in a new tab
+    window.open(item.url, '_blank', 'noopener,noreferrer');
+    
+    // Show a toast notification
+    toast({
+      title: "Resource opened",
+      description: `Opening ${item.title} in a new tab`,
+    });
   };
 
   return (
@@ -198,15 +210,13 @@ const ContentAggregator: React.FC = () => {
                       {item.date && <span>{formatDate(item.date)}</span>}
                     </div>
                     
-                    <a 
-                      href={item.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center text-sm font-medium text-primary hover:underline"
+                    <button 
+                      onClick={() => handleOpenResource(item)}
+                      className="inline-flex items-center text-sm font-medium text-primary hover:underline hover:bg-primary/10 px-2 py-1 rounded-md transition-colors"
                     >
                       View Resource
                       <ArrowRight className="ml-1 h-3 w-3" />
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -233,7 +243,6 @@ const formatDate = (dateString: string) => {
   return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(date);
 };
 
-// Additional components needed
 const Clock = ({ className }: { className?: string }) => {
   return <div className={className}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>;
 };
