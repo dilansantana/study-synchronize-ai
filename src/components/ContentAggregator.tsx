@@ -81,7 +81,7 @@ const ContentAggregator: React.FC = () => {
   ];
   
   // Additional resources for different certifications
-  const additionalResources = {
+  const additionalResources: Record<string, ContentItem[]> = {
     aws: [
       {
         id: 'aws1',
