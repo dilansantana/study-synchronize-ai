@@ -105,7 +105,273 @@ const Flashcards: React.FC<FlashcardsProps> = ({ className }) => {
       answer: 'SQL injection is a code injection technique that exploits vulnerabilities in web applications by inserting malicious SQL statements into entry fields for execution.',
       category: 'Web Security',
       difficulty: 'medium'
-    }
+    },
+    {
+      id: '13',
+      question: 'What is a DMZ in network security?',
+      answer: 'A Demilitarized Zone (DMZ) is a physical or logical subnetwork that contains and exposes an organization\'s external-facing services to an untrusted network, usually the internet.',
+      category: 'Network Security',
+      difficulty: 'medium'
+    },
+    {
+      id: '14',
+      question: 'What is the purpose of a SIEM system?',
+      answer: 'Security Information and Event Management (SIEM) systems collect, analyze, and correlate security events from various sources to detect threats and security incidents in real-time.',
+      category: 'Security Operations',
+      difficulty: 'medium'
+    },
+    {
+      id: '15',
+      question: 'What is the difference between blackbox and whitebox testing?',
+      answer: 'In blackbox testing, the tester has no knowledge of the internal structure of the application, while in whitebox testing, the tester has full knowledge of the internal structure, code, and infrastructure.',
+      category: 'Security Testing',
+      difficulty: 'medium'
+    },
+    {
+      id: '16',
+      question: 'What is a security control?',
+      answer: 'A security control is a safeguard or countermeasure designed to protect the confidentiality, integrity, and availability of data and systems in accordance with a set of defined requirements.',
+      category: 'Security Fundamentals',
+      difficulty: 'easy'
+    },
+    {
+      id: '17',
+      question: 'What is DNS poisoning?',
+      answer: 'DNS poisoning (or DNS spoofing) is an attack that corrupts a DNS server\'s cache, causing it to return incorrect IP addresses and diverting traffic to malicious websites.',
+      category: 'Network Security',
+      difficulty: 'medium'
+    },
+    {
+      id: '18',
+      question: 'What is the purpose of a WAF?',
+      answer: 'A Web Application Firewall (WAF) protects web applications by filtering and monitoring HTTP traffic between a web application and the Internet, specifically designed to protect against attacks like XSS and SQL injection.',
+      category: 'Web Security',
+      difficulty: 'medium'
+    },
+    {
+      id: '19',
+      question: 'What is a security baseline?',
+      answer: 'A security baseline is a minimum level of security controls required for a system or organization, serving as a reference point for security implementation and compliance measurement.',
+      category: 'Security Fundamentals',
+      difficulty: 'medium'
+    },
+    {
+      id: '20',
+      question: 'What is the purpose of penetration testing?',
+      answer: 'Penetration testing simulates cyberattacks against computer systems to check for exploitable vulnerabilities, helping organizations identify and remediate security weaknesses before malicious attackers can exploit them.',
+      category: 'Security Testing',
+      difficulty: 'easy'
+    },
+    {
+      id: '21',
+      question: 'What is a buffer overflow attack?',
+      answer: 'A buffer overflow attack occurs when a program writes more data to a buffer than it can hold, causing the excess data to overflow into adjacent memory space, potentially allowing execution of malicious code.',
+      category: 'Application Security',
+      difficulty: 'hard'
+    },
+    {
+      id: '22',
+      question: 'What is the difference between symmetric and asymmetric encryption?',
+      answer: 'Symmetric encryption uses the same key for encryption and decryption, while asymmetric encryption uses a public key for encryption and a private key for decryption.',
+      category: 'Cryptography',
+      difficulty: 'medium'
+    },
+    {
+      id: '23',
+      question: 'What is the CIA triad?',
+      answer: 'The CIA triad consists of Confidentiality (ensuring information is accessible only to authorized users), Integrity (ensuring information is accurate and reliable), and Availability (ensuring information is accessible when needed).',
+      category: 'Security Fundamentals',
+      difficulty: 'easy'
+    },
+    {
+      id: '24',
+      question: 'What is a security vulnerability?',
+      answer: 'A security vulnerability is a weakness in a system that can be exploited by a threat actor to gain unauthorized access, perform unauthorized actions, or cause harm to the system.',
+      category: 'Security Fundamentals',
+      difficulty: 'easy'
+    },
+    {
+      id: '25',
+      question: 'What is multi-factor authentication (MFA)?',
+      answer: 'Multi-factor authentication requires users to provide two or more verification factors to gain access to a resource, typically something you know (password), something you have (security token), and something you are (biometric).',
+      category: 'Access Control',
+      difficulty: 'easy'
+    },
+    {
+      id: '26',
+      question: 'What is a honeypot in cybersecurity?',
+      answer: 'A honeypot is a security mechanism used to detect, deflect, or study hacking attempts by simulating a vulnerable system or data that appears to be a legitimate part of the network.',
+      category: 'Security Operations',
+      difficulty: 'medium'
+    },
+    {
+      id: '27',
+      question: 'What is the difference between encoding, encryption, and hashing?',
+      answer: 'Encoding transforms data for usability and isn\'t secure, encryption transforms data to keep it secret with a key for decryption, and hashing creates a fixed-size unique output that can\'t be reversed.',
+      category: 'Cryptography',
+      difficulty: 'medium'
+    },
+    {
+      id: '28',
+      question: 'What is CSRF?',
+      answer: 'Cross-Site Request Forgery (CSRF) is an attack that forces authenticated users to execute unwanted actions on a web application in which they\'re currently authenticated.',
+      category: 'Web Security',
+      difficulty: 'medium'
+    },
+    {
+      id: '29',
+      question: 'What does NIST stand for in cybersecurity?',
+      answer: 'National Institute of Standards and Technology, a U.S. government agency that develops cybersecurity standards, guidelines, and frameworks.',
+      category: 'Security Fundamentals',
+      difficulty: 'easy'
+    },
+    {
+      id: '30',
+      question: 'What is the GDPR?',
+      answer: 'The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and privacy for individuals within the European Union and the European Economic Area.',
+      category: 'Compliance',
+      difficulty: 'medium'
+    },
+    {
+      id: '31',
+      question: 'What is a security incident?',
+      answer: 'A security incident is an event that potentially violates an organization\'s security policies or threatens the confidentiality, integrity, or availability of its information or systems.',
+      category: 'Security Operations',
+      difficulty: 'easy'
+    },
+    {
+      id: '32',
+      question: 'What is a backdoor in computer security?',
+      answer: 'A backdoor is a method of bypassing normal authentication or encryption in a computer system, allowing covert access to data or remote command execution.',
+      category: 'Malware',
+      difficulty: 'medium'
+    },
+    {
+      id: '33',
+      question: 'What is phishing?',
+      answer: 'Phishing is a type of social engineering attack where attackers disguise themselves as trustworthy entities to trick individuals into revealing sensitive information such as passwords or credit card numbers.',
+      category: 'Social Engineering',
+      difficulty: 'easy'
+    },
+    {
+      id: '34',
+      question: 'What is the purpose of a VPN?',
+      answer: 'A Virtual Private Network (VPN) extends a private network across a public network, enabling users to send and receive data across shared or public networks as if their devices were directly connected to the private network.',
+      category: 'Network Security',
+      difficulty: 'easy'
+    },
+    {
+      id: '35',
+      question: 'What is a security policy?',
+      answer: 'A security policy is a document that outlines an organization\'s approach to security, including rules, guidelines, and procedures to protect its assets, systems, and data.',
+      category: 'Security Fundamentals',
+      difficulty: 'easy'
+    },
+    {
+      id: '36',
+      question: 'What is a Trojan horse?',
+      answer: 'A Trojan horse is a type of malware that disguises itself as legitimate software but contains malicious code that can perform harmful actions when executed.',
+      category: 'Malware',
+      difficulty: 'easy'
+    },
+    {
+      id: '37',
+      question: 'What is the OWASP Top 10?',
+      answer: 'The OWASP Top 10 is a regularly updated report outlining the most critical web application security risks, published by the Open Web Application Security Project.',
+      category: 'Web Security',
+      difficulty: 'medium'
+    },
+    {
+      id: '38',
+      question: 'What is DDoS?',
+      answer: 'A Distributed Denial of Service (DDoS) attack is an attempt to make an online service unavailable by overwhelming it with traffic from multiple sources, disrupting normal service for legitimate users.',
+      category: 'Network Security',
+      difficulty: 'medium'
+    },
+    {
+      id: '39',
+      question: 'What is the principle of defense in depth?',
+      answer: 'Defense in depth is a security strategy that employs multiple layers of security controls throughout a system, so if one layer fails, another layer will provide protection.',
+      category: 'Security Fundamentals',
+      difficulty: 'medium'
+    },
+    {
+      id: '40',
+      question: 'What is a security audit?',
+      answer: 'A security audit is a systematic evaluation of an organization\'s security posture by measuring how well it conforms to established security criteria, policies, or standards.',
+      category: 'Security Operations',
+      difficulty: 'medium'
+    },
+    {
+      id: '41',
+      question: 'What is the purpose of TLS/SSL?',
+      answer: 'Transport Layer Security (TLS) and its predecessor Secure Sockets Layer (SSL) are cryptographic protocols designed to provide communications security over a computer network, primarily for secure web browsing.',
+      category: 'Cryptography',
+      difficulty: 'medium'
+    },
+    {
+      id: '42',
+      question: 'What is a security risk assessment?',
+      answer: 'A security risk assessment identifies, analyzes, and evaluates risks to an organization\'s information assets, helping prioritize security measures based on the likelihood and impact of potential threats.',
+      category: 'Security Operations',
+      difficulty: 'medium'
+    },
+    {
+      id: '43',
+      question: 'What is the difference between a threat, vulnerability, and risk?',
+      answer: 'A threat is a potential danger, a vulnerability is a weakness that can be exploited, and risk is the potential for loss resulting from a threat exploiting a vulnerability.',
+      category: 'Security Fundamentals',
+      difficulty: 'medium'
+    },
+    {
+      id: '44',
+      question: 'What is a security incident response plan?',
+      answer: 'A security incident response plan is a documented, structured approach to handling security incidents, with the goal of limiting damage and reducing recovery time and costs.',
+      category: 'Security Operations',
+      difficulty: 'medium'
+    },
+    {
+      id: '45',
+      question: 'What is SOAR in cybersecurity?',
+      answer: 'Security Orchestration, Automation, and Response (SOAR) refers to technologies that enable organizations to collect security data and alerts from different sources and automate incident response procedures.',
+      category: 'Security Operations',
+      difficulty: 'hard'
+    },
+    {
+      id: '46',
+      question: 'What is a security framework?',
+      answer: 'A security framework is a structured set of guidelines, standards, and best practices for managing security risks and implementing security controls in an organization.',
+      category: 'Security Fundamentals',
+      difficulty: 'medium'
+    },
+    {
+      id: '47',
+      question: 'What is a man-in-the-browser attack?',
+      answer: 'A man-in-the-browser attack is a form of internet threat where a trojan horse infects a web browser and modifies web pages or transaction content in real-time.',
+      category: 'Web Security',
+      difficulty: 'hard'
+    },
+    {
+      id: '48',
+      question: 'What is the purpose of a CASB?',
+      answer: 'A Cloud Access Security Broker (CASB) is a security policy enforcement point placed between cloud service users and cloud service providers to enforce security, compliance, and governance policies.',
+      category: 'Cloud Security',
+      difficulty: 'hard'
+    },
+    {
+      id: '49',
+      question: 'What is the purpose of a security operations center (SOC)?',
+      answer: 'A Security Operations Center (SOC) is a centralized unit that deals with security issues on an organizational and technical level, continuously monitoring and analyzing an organization\'s security posture.',
+      category: 'Security Operations',
+      difficulty: 'medium'
+    },
+    {
+      id: '50',
+      question: 'What is the difference between a security assessment and a security audit?',
+      answer: 'A security assessment evaluates an organization\'s security posture by identifying vulnerabilities and recommending improvements, while a security audit formally verifies compliance with established policies, standards, or regulations.',
+      category: 'Security Operations',
+      difficulty: 'medium'
+    },
   ];
   
   const currentCard = flashcards[currentCardIndex];
