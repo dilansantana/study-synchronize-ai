@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import AnimatedTransition from './AnimatedTransition';
@@ -109,7 +108,9 @@ const ContentAggregator: React.FC = () => {
               ))}
             </div>
           )}
-          <UltimateGuideGenerator availableResources={selectedResources.length ? selectedResources : filteredContent} />
+          <UltimateGuideGenerator 
+            availableResources={selectedResources.length ? selectedResources : filteredContent} 
+          />
         </AnimatedTransition>
       )}
 
