@@ -6,7 +6,6 @@ import { formatDate } from '@/utils/formatUtils';
 import AnimatedTransition from '../AnimatedTransition';
 import { ContentItem } from '@/data/learningResources';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
 
 interface ResourceCardProps {
   item: ContentItem;
@@ -21,21 +20,6 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({
   handleOpenResource, 
   onExtractResource 
 }) => {
-  const navigate = useNavigate();
-  
-  const handleCreateStudyPlan = () => {
-    // Extract certification name from the title
-    const certificationName = item.title.split(' ').slice(0, 2).join(' ');
-    
-    // Navigate to the study plan tab with the certification name
-    navigate('/learning', { 
-      state: { 
-        activeTab: 'studyplan',
-        certificationName 
-      } 
-    });
-  };
-  
   return (
     <AnimatedTransition
       key={item.id}
@@ -95,15 +79,6 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({
                   Extract Info
                 </Button>
               )}
-              
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleCreateStudyPlan}
-                className="text-xs"
-              >
-                Create Study Plan
-              </Button>
             </div>
           </div>
         </div>

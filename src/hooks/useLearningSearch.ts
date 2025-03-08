@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { ContentItem, initialContentItems, additionalResources } from '@/data/learningResources';
 import { useToast } from "@/hooks/use-toast";
@@ -224,18 +225,6 @@ export const useLearningSearch = () => {
     });
   };
 
-  const handleCreateStudyPlan = (certification: string) => {
-    toast({
-      title: "Create Study Plan",
-      description: `Switching to Study Plan Generator for ${certification}`,
-    });
-    
-    // Clear existing search and set the certification name
-    setSearchQuery(certification);
-    
-    // The StudyPlanGenerator component will handle the actual plan creation
-  };
-
   const filteredContent = contentItems.filter(item => {
     // Filter by search query
     const matchesSearch = searchQuery === '' || 
@@ -257,7 +246,6 @@ export const useLearningSearch = () => {
     searchedCertification,
     filteredContent,
     handleSearchForCertification,
-    handleOpenResource,
-    handleCreateStudyPlan
+    handleOpenResource
   };
 };
