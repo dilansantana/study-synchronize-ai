@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -50,6 +51,7 @@ const CertificationDetailsPage: React.FC = () => {
   useEffect(() => {
     if (certificationId) {
       console.log("Loading certification details for:", certificationId);
+      // Start with default certification info
       let info: CertificationInfo = {
         name: certificationNames[certificationId] || formatCertificationName(certificationId),
         duration: '60 - 90 days',
@@ -58,9 +60,11 @@ const CertificationDetailsPage: React.FC = () => {
         examCode: '',
         passingScore: '',
         validity: '3 years',
-        isVerified: false
+        // Set to true by default if the certification has a name in our database
+        isVerified: !!certificationNames[certificationId]
       };
       
+      // Then add specific details for well-known certifications
       if (certificationId.includes('comptia')) {
         if (certificationId.includes('security-plus')) {
           info = {
@@ -120,6 +124,38 @@ const CertificationDetailsPage: React.FC = () => {
             name: 'AWS Certification',
             examCost: '$100-$300 USD (varies by level)',
             validity: '3 years (renewable through examination)',
+            isVerified: true
+          };
+        }
+      } else if (certificationId.includes('google-cloud')) {
+        if (certificationId.includes('professional-architect')) {
+          info = {
+            ...info,
+            name: 'Google Cloud Professional Cloud Architect',
+            examCost: '$200 USD',
+            examCode: 'Professional Cloud Architect',
+            passingScore: 'Not published (scaled scoring)',
+            validity: '2 years (renewable through re-examination)',
+            isVerified: true
+          };
+        } else if (certificationId.includes('associate-engineer')) {
+          info = {
+            ...info,
+            name: 'Google Cloud Associate Cloud Engineer',
+            examCost: '$125 USD',
+            examCode: 'Associate Cloud Engineer',
+            passingScore: 'Not published (scaled scoring)',
+            validity: '2 years (renewable through re-examination)',
+            isVerified: true
+          };
+        } else if (certificationId.includes('professional-data-engineer')) {
+          info = {
+            ...info,
+            name: 'Google Cloud Professional Data Engineer',
+            examCost: '$200 USD',
+            examCode: 'Professional Data Engineer',
+            passingScore: 'Not published (scaled scoring)',
+            validity: '2 years (renewable through re-examination)',
             isVerified: true
           };
         }
@@ -204,6 +240,7 @@ const CertificationDetailsPage: React.FC = () => {
       
       setCertificationInfo(info);
       
+      // Only show toast for non-verified certifications
       if (!info.isVerified) {
         toast({
           title: "Certification not found",
