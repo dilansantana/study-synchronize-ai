@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface SearchBarProps {
   searchQuery: string;
@@ -27,13 +28,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           onChange={(e) => setSearchQuery(e.target.value)}
           disabled={isSearching}
         />
-        <button 
+        <Button 
           type="submit" 
-          className="ml-2 h-10 px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium disabled:opacity-50 disabled:pointer-events-none"
+          className="ml-2"
           disabled={isSearching}
         >
           {isSearching ? "Searching..." : "Find Resources"}
-        </button>
+        </Button>
       </form>
     </div>
   );
