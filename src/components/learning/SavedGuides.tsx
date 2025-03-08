@@ -6,7 +6,7 @@ import { ultimateGuides, ContentItem } from '@/data/learningResources';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, BookOpen, Calendar } from 'lucide-react';
 import AnimatedTransition from '../AnimatedTransition';
-import EmptyResults from './EmptyResults';
+import { EmptyResults } from './EmptyResults';
 
 const SavedGuides: React.FC = () => {
   const navigate = useNavigate();
