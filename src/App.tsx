@@ -10,6 +10,7 @@ import FlashcardsPage from "./pages/FlashcardsPage";
 import QuizPage from "./pages/QuizPage";
 import GuidePage from "./pages/GuidePage";
 import CertificationDetailsPage from "./pages/CertificationDetailsPage";
+import CertificationPathwayPage from "./pages/CertificationPathwayPage";
 import SubscriptionPage from "./pages/SubscriptionPage";
 import NotFound from "./pages/NotFound";
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/" element={<Navigate to="/learning" replace />} />
           <Route path="/index" element={<Index />} />
           <Route path="/learning" element={<LearningPage />} />
+          <Route path="/certification" element={<CertificationPathwayPage />} />
           <Route path="/flashcards" element={<FlashcardsPage />} />
           <Route path="/quiz" element={<QuizPage />} />
           <Route path="/guide/:guideId" element={<GuidePage />} />
