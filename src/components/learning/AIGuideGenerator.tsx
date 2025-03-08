@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { ContentItem, ultimateGuides } from "@/data/learningResources";
-import { Loader2, Brain, BrainCircuit } from "lucide-react";
+import { Loader2, Brain, BrainCircuit, AlertTriangle } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { ApiKeyDialog } from './ApiKeyDialog';
 import { optimizeContentWithGPT } from "@/utils/openAIUtils";
+import { GenerationProgress } from './GenerationProgress';
 
 const AIGuideGenerator: React.FC = () => {
   const { toast } = useToast();
@@ -20,6 +21,7 @@ const AIGuideGenerator: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [openAPIKeyDialog, setOpenAPIKeyDialog] = useState(false);
   const [apiKey, setApiKey] = useState("");
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const generateGuide = async () => {
     if (!topic.trim()) {
@@ -40,6 +42,7 @@ const AIGuideGenerator: React.FC = () => {
 
     setIsGenerating(true);
     setProgress(0);
+    setApiError(null);
     
     try {
       // Simulate progress
@@ -68,44 +71,95 @@ const AIGuideGenerator: React.FC = () => {
         description: "Please wait while ChatGPT generates your guide..."
       });
       
-      // Generate content using OpenAI
-      const generatedContent = await optimizeContentWithGPT(prompt, topic);
-      clearInterval(progressInterval);
-      
-      // Create a new guide
-      const newGuide: ContentItem = {
-        id: `guide-${Date.now()}`,
-        title: `AI-Generated Guide: ${topic}`,
-        source: 'guide',
-        description: `AI-generated ultimate guide covering essential topics for ${topic}.`,
-        url: '#',
-        date: new Date().toISOString().split('T')[0],
-        author: 'AI Assistant',
-        rating: 5.0,
-        content: generatedContent
-      };
-
-      // Save the guide
-      ultimateGuides[newGuide.id] = newGuide;
-      
-      toast({
-        title: "Guide generated successfully",
-        description: `Your guide on "${topic}" is now ready to view.`
-      });
-      
-      // Navigate to the new guide
-      navigate(`/guide/${newGuide.id}`);
+      try {
+        // Generate content using OpenAI
+        const generatedContent = await optimizeContentWithGPT(prompt, topic);
+        clearInterval(progressInterval);
+        createAndSaveGuide(generatedContent);
+      } catch (error) {
+        clearInterval(progressInterval);
+        console.error('Error optimizing content with GPT:', error);
+        
+        // Check for quota exceeded error
+        if (error instanceof Error && error.message.includes("quota")) {
+          setApiError("OpenAI API quota exceeded. Using fallback method to generate guide.");
+          generateFallbackGuide();
+        } else {
+          throw error; // Re-throw other errors
+        }
+      }
     } catch (error) {
       console.error('Error generating guide:', error);
       toast({
         title: "Generation failed",
-        description: "An error occurred while generating your guide. Please try again.",
+        description: error instanceof Error ? error.message : "An error occurred while generating your guide. Please try again.",
         variant: "destructive"
       });
-    } finally {
       setIsGenerating(false);
       setProgress(0);
     }
+  };
+
+  const generateFallbackGuide = () => {
+    // Create a basic template as fallback
+    const fallbackContent = `# Ultimate Guide to ${topic}
+
+## Introduction
+This is an auto-generated guide about ${topic}. ${additionalInfo ? `With a focus on: ${additionalInfo}` : ''}
+
+## Key Concepts
+- Understanding the basics of ${topic}
+- Important terminology
+- Core principles
+
+## Best Practices
+- Start with the fundamentals
+- Practice regularly
+- Join communities related to ${topic}
+
+## Learning Path
+1. Begin with introductory materials
+2. Build practical experience
+3. Advance to more complex topics
+4. Join specialized communities
+
+## Recommended Resources
+- Books: Look for beginner-friendly books on ${topic}
+- Online Courses: Platforms like Coursera, Udemy, and LinkedIn Learning offer courses on ${topic}
+- Communities: Find forums and discussion groups
+- Practice Projects: Build real-world projects to apply your knowledge
+
+*Note: This guide was generated using a fallback system when the AI generation service was unavailable. For a more detailed guide, please try again later.*`;
+
+    createAndSaveGuide(fallbackContent);
+  };
+
+  const createAndSaveGuide = (content: string) => {
+    // Create a new guide
+    const newGuide: ContentItem = {
+      id: `guide-${Date.now()}`,
+      title: `AI-Generated Guide: ${topic}`,
+      source: 'guide',
+      description: `AI-generated ultimate guide covering essential topics for ${topic}.`,
+      url: '#',
+      date: new Date().toISOString().split('T')[0],
+      author: 'AI Assistant',
+      rating: 5.0,
+      content: content
+    };
+
+    // Save the guide
+    ultimateGuides[newGuide.id] = newGuide;
+    
+    toast({
+      title: "Guide generated successfully",
+      description: `Your guide on "${topic}" is now ready to view.`
+    });
+    
+    // Navigate to the new guide
+    navigate(`/guide/${newGuide.id}`);
+    setIsGenerating(false);
+    setProgress(0);
   };
 
   const saveApiKey = () => {
@@ -156,18 +210,18 @@ const AIGuideGenerator: React.FC = () => {
             />
           </div>
           
-          {isGenerating && (
-            <div className="space-y-2">
-              <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-primary transition-all duration-500 ease-in-out rounded-full"
-                  style={{ width: `${progress}%` }}
-                />
+          {apiError && (
+            <div className="bg-amber-50 border border-amber-200 rounded-md p-3 flex items-start gap-2">
+              <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-amber-800">{apiError}</p>
+                <p className="text-xs text-amber-700 mt-1">A simplified guide will be generated instead.</p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Generating your guide... This may take a minute or two.
-              </p>
             </div>
+          )}
+          
+          {isGenerating && (
+            <GenerationProgress isGenerating={isGenerating} progress={progress} />
           )}
         </CardContent>
         <CardFooter>

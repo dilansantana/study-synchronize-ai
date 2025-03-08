@@ -57,7 +57,11 @@ export const optimizeContentWithGPT = async (content: string, title: string): Pr
     const data = await response.json();
     
     if (data.error) {
-      throw new Error(`OpenAI API error: ${data.error.message}`);
+      // Handle quota exceeded error differently
+      if (data.error.code === 'insufficient_quota') {
+        throw new Error(`OpenAI API error: You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.`);
+      }
+      throw new Error(`OpenAI API error: ${data.error.message || 'Unknown error'}`);
     }
     
     return data.choices[0].message.content;

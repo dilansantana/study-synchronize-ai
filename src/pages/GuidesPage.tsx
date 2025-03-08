@@ -4,6 +4,7 @@ import Layout from '@/components/Layout';
 import SavedGuides from '@/components/learning/SavedGuides';
 import AIGuideGenerator from '@/components/learning/AIGuideGenerator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BookOpen, BrainCircuit } from 'lucide-react';
 
 const GuidesPage: React.FC = () => {
   return (
@@ -16,9 +17,15 @@ const GuidesPage: React.FC = () => {
       </div>
       
       <Tabs defaultValue="saved" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="saved">Saved Guides</TabsTrigger>
-          <TabsTrigger value="generate">Generate with AI</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 max-w-md">
+          <TabsTrigger value="saved" className="flex items-center gap-2">
+            <BookOpen className="h-4 w-4" />
+            <span>Saved Guides</span>
+          </TabsTrigger>
+          <TabsTrigger value="generate" className="flex items-center gap-2">
+            <BrainCircuit className="h-4 w-4" />
+            <span>Generate with AI</span>
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="saved">
