@@ -15,21 +15,21 @@ export const ResourceList: React.FC<ResourceListProps> = ({
   handleOpenResource,
   onExtractResource
 }) => {
+  if (!filteredContent.length) {
+    return <EmptyResults />;
+  }
+
   return (
     <div className="space-y-4">
-      {filteredContent.length > 0 ? (
-        filteredContent.map((item, index) => (
-          <ResourceCard 
-            key={item.id} 
-            item={item} 
-            index={index} 
-            handleOpenResource={handleOpenResource}
-            onExtractResource={onExtractResource}
-          />
-        ))
-      ) : (
-        <EmptyResults />
-      )}
+      {filteredContent.map((item, index) => (
+        <ResourceCard 
+          key={item.id} 
+          item={item} 
+          index={index} 
+          handleOpenResource={handleOpenResource}
+          onExtractResource={onExtractResource}
+        />
+      ))}
     </div>
   );
 };
