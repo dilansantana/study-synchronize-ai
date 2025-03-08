@@ -24,9 +24,12 @@ const PopularCertifications: React.FC<PopularCertificationsProps> = ({
     onSelect(certId);
   };
 
+  // Limit display to only the first 6 certifications
+  const limitedCertifications = certifications.slice(0, 6);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {certifications.map(cert => (
+      {limitedCertifications.map(cert => (
         <Card 
           key={cert.id} 
           className="cursor-pointer hover:bg-muted/50 transition-colors" 
