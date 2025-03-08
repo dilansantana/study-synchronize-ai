@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -47,12 +48,12 @@ const QuizPage: React.FC = () => {
   }, [location.search]);
   
   const certificationOptions = [
-    { id: "", name: "General Knowledge" },
+    { id: "general", name: "General Knowledge" }, // Changed empty string to "general"
     ...popularCertifications.map(cert => ({ id: cert.id, name: cert.name }))
   ];
 
   const getCertificationName = () => {
-    if (!selectedCertification) return undefined;
+    if (!selectedCertification || selectedCertification === "general") return undefined;
     const cert = popularCertifications.find(c => c.id === selectedCertification);
     return cert ? cert.name : undefined;
   };
