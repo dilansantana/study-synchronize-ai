@@ -1,16 +1,26 @@
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Search } from 'lucide-react';
 
-export const EmptyResults: React.FC = () => {
+interface EmptyResultsProps {
+  title?: string;
+  description?: string;
+  icon?: ReactNode;
+}
+
+export const EmptyResults: React.FC<EmptyResultsProps> = ({ 
+  title = "No resources found", 
+  description = "Try adjusting your search or filter to find what you're looking for.",
+  icon = <Search className="h-6 w-6 text-muted-foreground" />
+}) => {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <div className="rounded-full bg-secondary p-3">
-        <Search className="h-6 w-6 text-muted-foreground" />
+        {icon}
       </div>
-      <h3 className="mt-4 text-lg font-medium">No resources found</h3>
+      <h3 className="mt-4 text-lg font-medium">{title}</h3>
       <p className="mt-1 text-sm text-muted-foreground">
-        Try adjusting your search or filter to find what you're looking for.
+        {description}
       </p>
     </div>
   );
