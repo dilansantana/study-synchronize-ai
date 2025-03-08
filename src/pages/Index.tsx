@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Shield, GraduationCap, BookOpen, Video, FlaskConical, CheckSquare, ArrowRight, Award } from 'lucide-react';
@@ -147,7 +146,6 @@ function Index() {
                 <AnimatedTransition
                   key={feature.title}
                   animation="slide"
-                  direction={index % 2 === 0 ? 'right' : 'left'}
                   delay={700 + (index * 100)}
                   className="flex gap-4 items-start"
                 >
