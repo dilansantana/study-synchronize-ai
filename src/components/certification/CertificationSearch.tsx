@@ -31,7 +31,15 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setCertificationQuery(value);
-    setShowSuggestions(value.length >= 2 && suggestions.length > 0);
+    
+    // Show suggestions when typing at least 2 characters and we have suggestions
+    const hasSuggestions = getSimilarityCertifications(
+      value, 
+      validCertifications,
+      certificationNames
+    ).length > 0;
+    
+    setShowSuggestions(value.length >= 2 && hasSuggestions);
   };
 
   return (
@@ -44,7 +52,14 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
           className="pl-10"
           value={certificationQuery}
           onChange={handleInputChange}
-          onFocus={() => setShowSuggestions(certificationQuery.length >= 2 && suggestions.length > 0)}
+          onFocus={() => {
+            const hasSuggestions = getSimilarityCertifications(
+              certificationQuery, 
+              validCertifications, 
+              certificationNames
+            ).length > 0;
+            setShowSuggestions(certificationQuery.length >= 2 && hasSuggestions);
+          }}
           onBlur={() => {
             setTimeout(() => setShowSuggestions(false), 200);
           }}

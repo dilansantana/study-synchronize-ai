@@ -15,7 +15,23 @@ export const getSimilarityCertifications = (
     
     // Direct match - high priority
     if (nameLower.includes(queryLower)) {
-      results.push([certId, 5]); // Increased score for direct matches
+      results.push([certId, 10]); // Even higher score for direct matches
+      continue;
+    }
+    
+    // Check for brand matches first (Okta, AWS, etc)
+    const brandNames = ["okta", "aws", "comptia", "cisco", "microsoft", "azure"];
+    let brandScore = 0;
+    
+    for (const brand of brandNames) {
+      if (queryLower.includes(brand) && nameLower.includes(brand)) {
+        brandScore = 8; // Higher score for brand name matches
+        break;
+      }
+    }
+    
+    if (brandScore > 0) {
+      results.push([certId, brandScore]);
       continue;
     }
     
@@ -35,17 +51,17 @@ export const getSimilarityCertifications = (
         else if (nameWord.startsWith(queryWord) || queryWord.startsWith(nameWord)) {
           matchScore += 2;
         } 
-        else if (nameWord.includes(queryWord.substring(0, 2))) {
+        else if (nameWord.includes(queryWord.substring(0, 3)) && queryWord.length >= 3) {
           matchScore += 1;
         }
       }
     }
     
-    // Check for brand names like "Okta", "AWS", "CompTIA" specifically
-    const brandNames = ["okta", "aws", "comptia", "cisco", "microsoft", "azure"];
-    for (const brand of brandNames) {
-      if (queryLower.includes(brand) && nameLower.includes(brand)) {
-        matchScore += 4; // High score for brand name matches
+    // Special case for certification levels (professional, associate, etc)
+    const certLevels = ["professional", "administrator", "associate", "practitioner", "specialist", "expert"];
+    for (const level of certLevels) {
+      if (queryLower.includes(level) && nameLower.includes(level)) {
+        matchScore += 4; // Boost score for matching certification levels
       }
     }
     

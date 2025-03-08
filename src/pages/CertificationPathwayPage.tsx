@@ -33,29 +33,31 @@ const CertificationPathwayPage: React.FC = () => {
       return;
     }
     
-    const certificationId = certificationQuery.toLowerCase().replace(/\s+/g, '-');
+    // Check if the search query matches any known certification directly
+    const matchingCertId = validCertifications.find(certId => {
+      const certName = certificationNames[certId] || certId;
+      return certName.toLowerCase().includes(certificationQuery.toLowerCase()) ||
+             certificationQuery.toLowerCase().includes(certId.toLowerCase());
+    });
     
-    const isValidCertification = validCertifications.some(cert => 
-      certificationId.includes(cert) || cert.includes(certificationId)
-    );
-    
-    if (isValidCertification) {
-      navigate(`/certification/${certificationId}`);
+    if (matchingCertId) {
+      // If we found a direct match, navigate to that certification
+      navigate(`/certification/${matchingCertId}`);
+    } else if (suggestions.length > 0) {
+      // If we have suggestions, show them and give a hint
+      setShowSuggestions(true);
+      toast({
+        title: "Did you mean...",
+        description: "We found similar certifications. Click on a suggestion below or try a different search.",
+        variant: "default"
+      });
     } else {
-      if (suggestions.length > 0) {
-        setShowSuggestions(true);
-        toast({
-          title: "Did you mean...",
-          description: "We found similar certifications. Click on a suggestion below or try a different search.",
-          variant: "default"
-        });
-      } else {
-        toast({
-          title: "Certification not found",
-          description: "This certification isn't in our database yet. Please try another one or select from popular certifications below.",
-          variant: "destructive"
-        });
-      }
+      // No matches and no suggestions
+      toast({
+        title: "Certification not found",
+        description: "This certification isn't in our database yet. Please try another one or select from popular certifications below.",
+        variant: "destructive"
+      });
     }
   };
 
