@@ -38,6 +38,80 @@ export const useLearningSearch = () => {
         newResources = additionalResources.okta;
       } else if (certKey.includes('azure')) {
         newResources = additionalResources.azure;
+      } else if (certKey.includes('comptia') || certKey.includes('security+') || certKey.includes('a+') || certKey.includes('network+')) {
+        // Add CompTIA specific resources
+        const examType = certKey.includes('security') ? 'Security+' : 
+                        certKey.includes('network') ? 'Network+' : 
+                        certKey.includes('a+') ? 'A+' : 'CompTIA';
+        
+        newResources = [
+          {
+            id: `comptia1-${Date.now()}`,
+            title: `${examType} Complete Course`,
+            source: 'youtube',
+            description: `Full course covering all ${examType} exam objectives with practice questions.`,
+            url: `https://www.youtube.com/results?search_query=${encodeURIComponent(examType + ' full course')}`,
+            duration: '11h 30m',
+            author: 'Professor Messer',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.9
+          },
+          {
+            id: `comptia2-${Date.now()}`,
+            title: `${examType} Official Study Guide`,
+            source: 'document',
+            description: `CompTIA's official study materials for the ${examType} certification.`,
+            url: `https://www.comptia.org/training/books`,
+            author: 'CompTIA',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.8
+          },
+          {
+            id: `comptia3-${Date.now()}`,
+            title: `${examType} Practice Tests`,
+            source: 'document',
+            description: `Practice exams with detailed explanations for each question.`,
+            url: `https://www.google.com/search?q=${encodeURIComponent(examType + ' practice tests')}`,
+            author: 'Various',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.7
+          }
+        ];
+      } else if (certKey.includes('cisco') || certKey.includes('ccna')) {
+        // Add Cisco specific resources
+        newResources = [
+          {
+            id: `cisco1-${Date.now()}`,
+            title: `CCNA Complete Course 2023`,
+            source: 'youtube',
+            description: `Comprehensive CCNA course covering all exam topics with practical demonstrations.`,
+            url: 'https://www.youtube.com/results?search_query=ccna+complete+course',
+            duration: '15h 45m',
+            author: 'Jeremy IT Lab',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.9
+          },
+          {
+            id: `cisco2-${Date.now()}`,
+            title: `Cisco CCNA Official Cert Guide`,
+            source: 'document',
+            description: `Official certification guide with exam preparation materials.`,
+            url: 'https://www.cisco.com/c/en/us/training-events/training-certifications/certifications/associate/ccna.html',
+            author: 'Cisco Press',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.8
+          },
+          {
+            id: `cisco3-${Date.now()}`,
+            title: `CCNA Packet Tracer Labs`,
+            source: 'document',
+            description: `Hands-on lab exercises using Cisco Packet Tracer.`,
+            url: 'https://www.google.com/search?q=ccna+packet+tracer+labs',
+            author: 'Various',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.7
+          }
+        ];
       }
       
       // If no predefined resources, generate generic ones based on search query
@@ -74,6 +148,27 @@ export const useLearningSearch = () => {
             author: 'r/certifications',
             date: new Date().toISOString().split('T')[0],
             rating: 4.2
+          },
+          {
+            id: `gen4-${Date.now()}`,
+            title: `${capitalizedSearch} Practice Exams`,
+            source: 'document',
+            description: `Practice tests with detailed explanations to prepare for the ${capitalizedSearch} exam.`,
+            url: 'https://www.google.com/search?q=' + encodeURIComponent(searchQuery + ' practice exams'),
+            author: 'Test Prep',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.6
+          },
+          {
+            id: `gen5-${Date.now()}`,
+            title: `${capitalizedSearch} Certification Bootcamp`,
+            source: 'youtube',
+            description: `Intensive bootcamp-style training for ${capitalizedSearch} certification.`,
+            url: 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery + ' certification bootcamp'),
+            duration: '8h 15m',
+            author: 'Certification Academy',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.7
           }
         ];
       }
@@ -100,6 +195,18 @@ export const useLearningSearch = () => {
     });
   };
 
+  const handleCreateStudyPlan = (certification: string) => {
+    toast({
+      title: "Create Study Plan",
+      description: `Switching to Study Plan Generator for ${certification}`,
+    });
+    
+    // Clear existing search and set the certification name
+    setSearchQuery(certification);
+    
+    // The StudyPlanGenerator component will handle the actual plan creation
+  };
+
   const filteredContent = contentItems.filter(item => {
     // Filter by search query
     const matchesSearch = searchQuery === '' || 
@@ -121,6 +228,7 @@ export const useLearningSearch = () => {
     searchedCertification,
     filteredContent,
     handleSearchForCertification,
-    handleOpenResource
+    handleOpenResource,
+    handleCreateStudyPlan
   };
 };

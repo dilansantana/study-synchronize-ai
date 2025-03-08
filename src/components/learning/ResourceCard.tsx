@@ -5,6 +5,8 @@ import { getSourceIcon } from './ResourceIcons';
 import { formatDate } from '@/utils/formatUtils';
 import AnimatedTransition from '../AnimatedTransition';
 import { ContentItem } from '@/data/learningResources';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface ResourceCardProps {
   item: ContentItem;
@@ -13,6 +15,21 @@ interface ResourceCardProps {
 }
 
 export const ResourceCard: React.FC<ResourceCardProps> = ({ item, index, handleOpenResource }) => {
+  const navigate = useNavigate();
+  
+  const handleCreateStudyPlan = () => {
+    // Extract certification name from the title
+    const certificationName = item.title.split(' ').slice(0, 2).join(' ');
+    
+    // Navigate to the study plan tab with the certification name
+    navigate('/learning', { 
+      state: { 
+        activeTab: 'studyplan',
+        certificationName 
+      } 
+    });
+  };
+  
   return (
     <AnimatedTransition
       key={item.id}
@@ -53,13 +70,24 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ item, index, handleO
               {item.date && <span>{formatDate(item.date)}</span>}
             </div>
             
-            <button 
-              onClick={() => handleOpenResource(item)}
-              className="inline-flex items-center text-sm font-medium text-primary hover:underline hover:bg-primary/10 px-2 py-1 rounded-md transition-colors"
-            >
-              View Resource
-              <ArrowRight className="ml-1 h-3 w-3" />
-            </button>
+            <div className="flex space-x-2">
+              <button 
+                onClick={() => handleOpenResource(item)}
+                className="inline-flex items-center text-sm font-medium text-primary hover:underline hover:bg-primary/10 px-2 py-1 rounded-md transition-colors"
+              >
+                View Resource
+                <ArrowRight className="ml-1 h-3 w-3" />
+              </button>
+              
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleCreateStudyPlan}
+                className="text-xs"
+              >
+                Create Study Plan
+              </Button>
+            </div>
           </div>
         </div>
       </div>
