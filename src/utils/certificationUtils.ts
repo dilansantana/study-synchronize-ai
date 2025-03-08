@@ -123,3 +123,96 @@ export const getSimilarityCertifications = (
     .slice(0, 8)
     .map(item => item[0]);
 };
+
+export const searchCertificationsOnline = async (query: string): Promise<any[]> => {
+  try {
+    console.log("Searching online for:", query);
+    
+    // Simulate a delay for the online search
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // This is where we would integrate with a real API to search for certifications
+    // For now, we'll simulate results based on common certification patterns
+    const searchQuery = query.toLowerCase().trim();
+    
+    const onlineResults = [];
+    
+    // Check if the query resembles a certification name or acronym
+    if (searchQuery.includes('certified') || 
+        searchQuery.includes('certification') || 
+        searchQuery.includes('cert') ||
+        searchQuery.match(/^[a-z0-9\-\+]+$/i)) { // Simple pattern for acronyms like CCNA, AWS+, etc.
+      
+      // Generate some plausible results based on the query
+      onlineResults.push({
+        id: `online-${searchQuery.replace(/\s+/g, '-')}`,
+        name: query.length <= 6 ? 
+              query.toUpperCase() + ' Certification' : 
+              query.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+        description: `This certification was found online based on your search for "${query}".`,
+        source: 'online',
+        category: detectCategory(searchQuery)
+      });
+      
+      // Add some related results
+      if (searchQuery.includes('cloud')) {
+        onlineResults.push({
+          id: 'online-cloud-certification',
+          name: 'Cloud Computing Certification',
+          description: 'Related cloud certification found online.',
+          source: 'online',
+          category: 'Cloud'
+        });
+      }
+      
+      if (searchQuery.includes('security')) {
+        onlineResults.push({
+          id: 'online-security-certification',
+          name: 'Security Professional Certification',
+          description: 'Related security certification found online.',
+          source: 'online',
+          category: 'Security'
+        });
+      }
+    }
+    
+    return onlineResults;
+  } catch (error) {
+    console.error("Error searching for certifications online:", error);
+    return [];
+  }
+};
+
+// Helper function to detect certification category based on search terms
+function detectCategory(query: string): string {
+  const categoryMap: Record<string, string> = {
+    'security': 'Security',
+    'network': 'Networking',
+    'cloud': 'Cloud',
+    'aws': 'Cloud',
+    'azure': 'Cloud',
+    'google': 'Cloud',
+    'project': 'Management',
+    'scrum': 'Management',
+    'agile': 'Management',
+    'itil': 'Service Management',
+    'data': 'Data',
+    'analytics': 'Data',
+    'developer': 'Development',
+    'programming': 'Development',
+    'code': 'Development',
+    'admin': 'Administration',
+    'linux': 'Systems',
+    'windows': 'Systems',
+    'cyber': 'Security',
+  };
+  
+  for (const [key, value] of Object.entries(categoryMap)) {
+    if (query.includes(key)) {
+      return value;
+    }
+  }
+  
+  return 'Other';
+}
+

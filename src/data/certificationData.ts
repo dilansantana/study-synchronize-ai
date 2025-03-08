@@ -63,7 +63,15 @@ export const certificationNames: Record<string, string> = {
   'servicenow-admin': 'ServiceNow Certified System Administrator'
 };
 
-export const popularCertifications = [
+export interface Certification {
+  id: string;
+  name: string;
+  category: string;
+  source?: string;
+  description?: string;
+}
+
+export const popularCertifications: Certification[] = [
   { id: 'comptia-security-plus', name: 'CompTIA Security+', category: 'Security' },
   { id: 'cisco-ccna', name: 'Cisco CCNA', category: 'Networking' },
   { id: 'aws-solutions-architect', name: 'AWS Solutions Architect', category: 'Cloud' },

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, X } from 'lucide-react';
+import { Search, X, Globe, Loader2 } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getSimilarityCertifications } from '@/utils/certificationUtils';
@@ -15,6 +15,7 @@ interface CertificationSearchProps {
   setShowSuggestions: (show: boolean) => void;
   handleCertificationSearch: (e: React.FormEvent) => void;
   handleSuggestionClick: (certId: string) => void;
+  isSearchingOnline?: boolean;
 }
 
 const CertificationSearch: React.FC<CertificationSearchProps> = ({
@@ -26,7 +27,8 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
   showSuggestions,
   setShowSuggestions,
   handleCertificationSearch,
-  handleSuggestionClick
+  handleSuggestionClick,
+  isSearchingOnline = false
 }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -91,7 +93,7 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
               {suggestions.map((certId) => (
                 <li 
                   key={certId}
-                  className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                  className="px-3 py-2 hover:bg-muted cursor-pointer text-sm flex items-center gap-2"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -99,14 +101,28 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
                   }}
                   onMouseDown={(e) => e.preventDefault()} // Prevent blur from hiding suggestion
                 >
+                  {certId.startsWith('online-') && <Globe className="h-4 w-4 text-blue-500" />}
                   {certificationNames[certId] || certId}
+                  {certId.startsWith('online-') && <span className="text-xs text-blue-500 ml-auto">Web Result</span>}
                 </li>
               ))}
             </ul>
           </div>
         )}
       </div>
-      <Button type="submit">Explore</Button>
+      <Button type="submit" disabled={isSearchingOnline} className="relative">
+        {isSearchingOnline ? (
+          <>
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            Searching...
+          </>
+        ) : (
+          <>
+            <Globe className="h-4 w-4 mr-2" />
+            Explore
+          </>
+        )}
+      </Button>
     </form>
   );
 };

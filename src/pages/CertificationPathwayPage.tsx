@@ -1,7 +1,7 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Award, Search } from 'lucide-react';
+import { Award, Search, Globe } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 import Layout from '@/components/Layout';
@@ -9,19 +9,36 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import CertificationSearch from '@/components/certification/CertificationSearch';
 import PopularCertifications from '@/components/certification/PopularCertifications';
 import { validCertifications, certificationNames, popularCertifications } from '@/data/certificationData';
-import { getSimilarityCertifications } from '@/utils/certificationUtils';
+import { getSimilarityCertifications, searchCertificationsOnline } from '@/utils/certificationUtils';
 
 const CertificationPathwayPage: React.FC = () => {
   const [certificationQuery, setCertificationQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSearchingOnline, setIsSearchingOnline] = useState(false);
+  const [onlineResults, setOnlineResults] = useState<any[]>([]);
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const suggestions = useMemo(() => {
-    return getSimilarityCertifications(certificationQuery, validCertifications, certificationNames);
+    const localSuggestions = getSimilarityCertifications(certificationQuery, validCertifications, certificationNames);
+    return localSuggestions;
   }, [certificationQuery]);
 
-  const handleCertificationSearch = (e: React.FormEvent) => {
+  const allSuggestions = useMemo(() => {
+    return [...suggestions, ...onlineResults.map(result => result.id)];
+  }, [suggestions, onlineResults]);
+
+  const allCertificationNames = useMemo(() => {
+    const online = Object.fromEntries(onlineResults.map(result => [result.id, result.name]));
+    return { ...certificationNames, ...online };
+  }, [onlineResults]);
+
+  useEffect(() => {
+    // Clear online results when the query changes
+    setOnlineResults([]);
+  }, [certificationQuery]);
+
+  const handleCertificationSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!certificationQuery.trim()) {
@@ -54,12 +71,42 @@ const CertificationPathwayPage: React.FC = () => {
       return;
     }
     
-    // No matches and no suggestions
-    toast({
-      title: "Certification not found",
-      description: "This certification isn't in our database yet. Please try another one or select from popular certifications below.",
-      variant: "destructive"
-    });
+    // No matches and no suggestions - search online
+    setIsSearchingOnline(true);
+    try {
+      toast({
+        title: "Searching online",
+        description: "Looking for certifications that match your search...",
+      });
+      
+      const results = await searchCertificationsOnline(certificationQuery);
+      setOnlineResults(results);
+      
+      if (results.length > 0) {
+        toast({
+          title: "Online results found",
+          description: `Found ${results.length} certification(s) from online sources.`,
+        });
+        
+        // Navigate to the first online result
+        navigate(`/certification/${results[0].id}`);
+      } else {
+        toast({
+          title: "Certification not found",
+          description: "We couldn't find this certification in our database or online. Please try another search.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error("Error searching online:", error);
+      toast({
+        title: "Search error",
+        description: "An error occurred while searching online. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSearchingOnline(false);
+    }
   };
 
   const handleSelectCertification = (certificationId: string) => {
@@ -68,7 +115,7 @@ const CertificationPathwayPage: React.FC = () => {
 
   const handleSuggestionClick = (certId: string) => {
     console.log("Suggestion clicked:", certId);
-    setCertificationQuery(certificationNames[certId] || certId);
+    setCertificationQuery(allCertificationNames[certId] || certId);
     setShowSuggestions(false);
     navigate(`/certification/${certId}`);
   };
@@ -90,7 +137,7 @@ const CertificationPathwayPage: React.FC = () => {
           <CardHeader>
             <CardTitle>Find Your Certification</CardTitle>
             <CardDescription>
-              Search for any IT certification by name, vendor, or abbreviation
+              Search for any IT certification by name, vendor, or abbreviation - we'll search the internet if it's not in our database
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -98,12 +145,13 @@ const CertificationPathwayPage: React.FC = () => {
               certificationQuery={certificationQuery}
               setCertificationQuery={setCertificationQuery}
               validCertifications={validCertifications}
-              certificationNames={certificationNames}
-              suggestions={suggestions}
+              certificationNames={allCertificationNames}
+              suggestions={allSuggestions}
               showSuggestions={showSuggestions}
               setShowSuggestions={setShowSuggestions}
               handleCertificationSearch={handleCertificationSearch}
               handleSuggestionClick={handleSuggestionClick}
+              isSearchingOnline={isSearchingOnline}
             />
           </CardContent>
         </Card>
