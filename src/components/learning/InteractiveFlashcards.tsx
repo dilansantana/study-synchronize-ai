@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, RotateCcw, Plus, Sparkles } from 'lucide-rea
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useToast } from '@/hooks/use-toast';
+import { FlashcardCreationModal, CustomFlashcard } from './FlashcardCreationModal';
 
 interface Flashcard {
   id: string;
@@ -32,6 +33,7 @@ export const InteractiveFlashcards: React.FC<FlashcardDeckProps> = ({
   const [flipped, setFlipped] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [reviewStatus, setReviewStatus] = useState<Record<string, 'correct' | 'incorrect' | null>>({});
+  const [showFlashcardModal, setShowFlashcardModal] = useState(false);
   
   // This would normally come from an API or be generated based on certification
   const [flashcards, setFlashcards] = useState<Flashcard[]>([
@@ -72,6 +74,32 @@ export const InteractiveFlashcards: React.FC<FlashcardDeckProps> = ({
     }
   ]);
 
+  // Load custom flashcards from localStorage
+  useEffect(() => {
+    const loadCustomFlashcards = () => {
+      try {
+        const savedFlashcards = localStorage.getItem('customFlashcards');
+        if (savedFlashcards) {
+          const parsedFlashcards = JSON.parse(savedFlashcards) as CustomFlashcard[];
+          
+          // Filter by certification if specified
+          const filteredFlashcards = certificationName 
+            ? parsedFlashcards.filter(card => 
+                !card.certificationId || 
+                card.certificationId === certificationName.toLowerCase().replace(/\s+/g, '-')
+              )
+            : parsedFlashcards;
+            
+          setFlashcards(prev => [...prev, ...filteredFlashcards]);
+        }
+      } catch (error) {
+        console.error('Error loading custom flashcards:', error);
+      }
+    };
+    
+    loadCustomFlashcards();
+  }, [certificationName]);
+
   const currentCard = flashcards[currentIndex];
   
   const handleFlip = () => {
@@ -111,6 +139,26 @@ export const InteractiveFlashcards: React.FC<FlashcardDeckProps> = ({
     });
     
     nextCard();
+  };
+
+  const handleSaveCustomFlashcard = (flashcard: CustomFlashcard) => {
+    // Add to current session
+    setFlashcards(prev => [...prev, flashcard]);
+    
+    // Save to localStorage
+    try {
+      const savedFlashcards = localStorage.getItem('customFlashcards');
+      const existingFlashcards = savedFlashcards ? JSON.parse(savedFlashcards) as CustomFlashcard[] : [];
+      
+      localStorage.setItem('customFlashcards', JSON.stringify([...existingFlashcards, flashcard]));
+    } catch (error) {
+      console.error('Error saving custom flashcard:', error);
+      toast({
+        title: "Error saving flashcard",
+        description: "There was an error saving your flashcard. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const totalCards = flashcards.length;
@@ -251,7 +299,11 @@ export const InteractiveFlashcards: React.FC<FlashcardDeckProps> = ({
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline" className="flex items-center gap-1">
+        <Button 
+          variant="outline" 
+          className="flex items-center gap-1"
+          onClick={() => setShowFlashcardModal(true)}
+        >
           <Plus className="h-4 w-4" />
           Add Custom Card
         </Button>
@@ -260,6 +312,14 @@ export const InteractiveFlashcards: React.FC<FlashcardDeckProps> = ({
           Generate More Flashcards
         </Button>
       </CardFooter>
+
+      {/* Flashcard Creation Modal */}
+      <FlashcardCreationModal
+        open={showFlashcardModal}
+        onOpenChange={setShowFlashcardModal}
+        onSave={handleSaveCustomFlashcard}
+        certificationName={certificationName}
+      />
     </Card>
   );
 };
