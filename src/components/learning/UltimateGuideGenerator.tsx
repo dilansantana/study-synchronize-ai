@@ -152,7 +152,7 @@ export const UltimateGuideGenerator: React.FC<UltimateGuideGeneratorProps> = ({ 
       description: "Redirecting to flashcards with pre-populated content"
     });
     
-    // In a real implementation, we would pass the guide content to the flashcards page
+    // Navigate to flashcards page with guide content
     navigate('/flashcards', { state: { guideContent: generatedGuide.content } });
   };
 
@@ -164,7 +164,7 @@ export const UltimateGuideGenerator: React.FC<UltimateGuideGeneratorProps> = ({ 
       description: "Redirecting to quiz generator with pre-populated content"
     });
     
-    // In a real implementation, we would pass the guide content to the quiz page
+    // Navigate to quiz page with guide content
     navigate('/quiz', { state: { guideContent: generatedGuide.content } });
   };
 
