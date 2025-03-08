@@ -3,18 +3,20 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ContentItem } from "@/data/learningResources";
-import { FileText, BookOpen } from "lucide-react";
+import { FileText, BookOpen, ExternalLink } from "lucide-react";
 
 interface GuidePreviewProps {
   generatedGuide: ContentItem | null;
   onCreateFlashcards: () => void;
   onCreateQuiz: () => void;
+  onViewGuide: () => void;
 }
 
 export const GuidePreview: React.FC<GuidePreviewProps> = ({
   generatedGuide,
   onCreateFlashcards,
-  onCreateQuiz
+  onCreateQuiz,
+  onViewGuide
 }) => {
   if (!generatedGuide) return null;
   
@@ -36,7 +38,7 @@ export const GuidePreview: React.FC<GuidePreviewProps> = ({
         <div className="mb-2 flex items-center justify-between">
           <span className="text-sm font-medium">Generated Content</span>
           <span className="text-xs text-muted-foreground">
-            Content includes extracted YouTube captions where available
+            Content includes extracted information from all selected resources
           </span>
         </div>
         <Textarea 
@@ -62,6 +64,14 @@ export const GuidePreview: React.FC<GuidePreviewProps> = ({
         >
           <BookOpen className="mr-2 h-4 w-4" />
           Create Quiz
+        </Button>
+        <Button
+          onClick={onViewGuide}
+          variant="default"
+          className="flex-1 flex items-center justify-center"
+        >
+          <ExternalLink className="mr-2 h-4 w-4" />
+          View Full Guide
         </Button>
       </div>
     </div>

@@ -3,6 +3,7 @@ import React from 'react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { ContentItem } from "@/data/learningResources";
 import { getSourceIcon } from './ResourceIcons';
+import { Badge } from "@/components/ui/badge";
 
 interface ResourceSelectionListProps {
   availableResources: ContentItem[];
@@ -67,14 +68,22 @@ export const ResourceSelectionList: React.FC<ResourceSelectionListProps> = ({
                   onCheckedChange={() => onResourceToggle(resource.id)}
                 />
                 <div className="flex-1">
-                  <label 
-                    htmlFor={`resource-${resource.id}`}
-                    className="text-sm font-medium cursor-pointer flex items-center gap-2"
-                  >
-                    {getSourceIcon(resource.source)}
-                    {resource.title}
-                  </label>
+                  <div className="flex items-center gap-2">
+                    <label 
+                      htmlFor={`resource-${resource.id}`}
+                      className="text-sm font-medium cursor-pointer flex items-center gap-2"
+                    >
+                      {getSourceIcon(resource.source)}
+                      {resource.title}
+                    </label>
+                    <Badge variant="outline" className="text-xs">
+                      {resource.source}
+                    </Badge>
+                  </div>
                   <p className="text-xs text-muted-foreground">{resource.description}</p>
+                  {resource.author && (
+                    <p className="text-xs text-muted-foreground mt-1">By: {resource.author}</p>
+                  )}
                 </div>
               </div>
             ))}
