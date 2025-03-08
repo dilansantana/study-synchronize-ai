@@ -1,6 +1,7 @@
+
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Award } from 'lucide-react';
+import { Award, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 import Layout from '@/components/Layout';
@@ -43,18 +44,22 @@ const CertificationPathwayPage: React.FC = () => {
       // Direct match found, navigate to that certification
       console.log("Direct match found:", matchingCertId);
       navigate(`/certification/${matchingCertId}`);
-    } else if (suggestions.length > 0) {
+      return;
+    } 
+    
+    if (suggestions.length > 0) {
       // If we have suggestions, navigate to the first one
       console.log("Using first suggestion:", suggestions[0]);
       navigate(`/certification/${suggestions[0]}`);
-    } else {
-      // No matches and no suggestions
-      toast({
-        title: "Certification not found",
-        description: "This certification isn't in our database yet. Please try another one or select from popular certifications below.",
-        variant: "destructive"
-      });
+      return;
     }
+    
+    // No matches and no suggestions
+    toast({
+      title: "Certification not found",
+      description: "This certification isn't in our database yet. Please try another one or select from popular certifications below.",
+      variant: "destructive"
+    });
   };
 
   const handleSelectCertification = (certificationId: string) => {
@@ -84,7 +89,9 @@ const CertificationPathwayPage: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle>Find Your Certification</CardTitle>
-            <CardDescription>Search for any IT certification to explore its learning path</CardDescription>
+            <CardDescription>
+              Search for any IT certification by name, vendor, or abbreviation
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <CertificationSearch
@@ -102,9 +109,11 @@ const CertificationPathwayPage: React.FC = () => {
         </Card>
         
         <Card>
-          <CardHeader>
-            <CardTitle>Popular Certifications</CardTitle>
-            <CardDescription>Explore commonly pursued IT certifications</CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <div>
+              <CardTitle>Popular Certifications</CardTitle>
+              <CardDescription>Explore commonly pursued IT certifications</CardDescription>
+            </div>
           </CardHeader>
           <CardContent>
             <PopularCertifications 
