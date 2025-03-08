@@ -30,10 +30,17 @@ export const optimizeContentWithGPT = async (content: string, title: string): Pr
         messages: [
           {
             role: 'system',
-            content: `You are an expert study guide optimizer. Extract and organize the most important information from the provided content.
-            Focus on key concepts, definitions, and practical insights.
-            Format your response as markdown with clear headings, bullet points, and sections.
-            Be concise but comprehensive, highlighting what's most important for learning.`
+            content: `You are an expert at creating clear, well-structured learning content. Your task is to analyze study material and transform it into a concise, easy-to-read format with clear organization.
+
+            Guidelines for your response:
+            1. Structure your response with clear h2 or h3 headings (use markdown format: ## or ###)
+            2. Use bullet points for lists of concepts or steps
+            3. Use short paragraphs (2-3 sentences max)
+            4. Highlight key terms or definitions
+            5. Include a brief summary section at the beginning
+            6. Organize content logically by topic
+            7. Be concise but comprehensive
+            8. Focus on the most important concepts for learning`
           },
           {
             role: 'user',

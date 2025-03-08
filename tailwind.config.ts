@@ -57,6 +57,16 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))'
         },
+        // Add soft UI colors
+        'soft-green': '#F2FCE2',
+        'soft-yellow': '#FEF7CD',
+        'soft-orange': '#FEC6A1',
+        'soft-purple': '#E5DEFF',
+        'soft-pink': '#FFDEE2',
+        'soft-peach': '#FDE1D3',
+        'soft-blue': '#D3E4FD',
+        'soft-gray': '#F1F0FB',
+        'dark-charcoal': '#221F26',
       },
       borderRadius: {
         lg: 'var(--radius)',
