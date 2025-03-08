@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Sparkles } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CheckoutButton } from "@/components/payment/StripeCheckout";
 
 interface PlanFeature {
   id: string;
@@ -67,7 +67,8 @@ export const SubscriptionPlans: React.FC = () => {
         popular: false,
         buttonText: 'Current Plan',
         buttonDisabled: true,
-        buttonVariant: 'outline'
+        buttonVariant: 'outline',
+        priceId: ''  // No price ID for free plan
       },
       {
         id: 'premium',
@@ -78,7 +79,8 @@ export const SubscriptionPlans: React.FC = () => {
         popular: true,
         buttonText: 'Upgrade Now',
         buttonDisabled: false,
-        buttonVariant: 'default'
+        buttonVariant: 'default',
+        priceId: 'price_1OkWXXXXXXXXXXX_monthly'  // Replace with actual Stripe price ID
       },
       {
         id: 'advanced',
@@ -89,7 +91,8 @@ export const SubscriptionPlans: React.FC = () => {
         popular: false,
         buttonText: 'Get Advanced',
         buttonDisabled: false,
-        buttonVariant: 'outline'
+        buttonVariant: 'outline',
+        priceId: 'price_1OkWXXXXXXXXXXX_monthly'  // Replace with actual Stripe price ID
       }
     ],
     yearly: [
@@ -102,7 +105,8 @@ export const SubscriptionPlans: React.FC = () => {
         popular: false,
         buttonText: 'Current Plan',
         buttonDisabled: true,
-        buttonVariant: 'outline'
+        buttonVariant: 'outline',
+        priceId: ''  // No price ID for free plan
       },
       {
         id: 'premium',
@@ -113,7 +117,8 @@ export const SubscriptionPlans: React.FC = () => {
         popular: true,
         buttonText: 'Upgrade Now',
         buttonDisabled: false,
-        buttonVariant: 'default'
+        buttonVariant: 'default',
+        priceId: 'price_1OkWXXXXXXXXXXX_yearly'  // Replace with actual Stripe price ID
       },
       {
         id: 'advanced',
@@ -124,7 +129,8 @@ export const SubscriptionPlans: React.FC = () => {
         popular: false,
         buttonText: 'Get Advanced',
         buttonDisabled: false,
-        buttonVariant: 'outline'
+        buttonVariant: 'outline',
+        priceId: 'price_1OkWXXXXXXXXXXX_yearly'  // Replace with actual Stripe price ID
       }
     ]
   };
@@ -198,13 +204,25 @@ export const SubscriptionPlans: React.FC = () => {
                   </CardContent>
                   
                   <CardFooter>
-                    <Button 
-                      variant={plan.buttonVariant as any} 
-                      className="w-full" 
-                      disabled={plan.buttonDisabled}
-                    >
-                      {plan.buttonText}
-                    </Button>
+                    {plan.id === 'free' ? (
+                      <CheckoutButton 
+                        priceId=""
+                        planName={plan.name}
+                        buttonText={plan.buttonText}
+                        buttonVariant={plan.buttonVariant as any}
+                        disabled={plan.buttonDisabled}
+                        className="w-full"
+                      />
+                    ) : (
+                      <CheckoutButton 
+                        priceId={plan.priceId}
+                        planName={plan.name}
+                        buttonText={plan.buttonText}
+                        buttonVariant={plan.buttonVariant as any}
+                        disabled={plan.buttonDisabled}
+                        className="w-full"
+                      />
+                    )}
                   </CardFooter>
                 </Card>
               ))}
