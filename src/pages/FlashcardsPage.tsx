@@ -16,7 +16,7 @@ const FlashcardsPage: React.FC = () => {
   const [selectedCertification, setSelectedCertification] = useState<string>("");
   
   const certificationOptions = [
-    { id: "", name: "General Knowledge" },
+    { id: "general", name: "General Knowledge" }, // Changed empty string to "general"
     ...popularCertifications.map(cert => ({ id: cert.id, name: cert.name }))
   ];
 
@@ -42,7 +42,7 @@ const FlashcardsPage: React.FC = () => {
   };
 
   const getCertificationName = () => {
-    if (!selectedCertification) return undefined;
+    if (!selectedCertification || selectedCertification === "general") return undefined; // Update to handle "general"
     const cert = popularCertifications.find(c => c.id === selectedCertification);
     return cert ? cert.name : undefined;
   };
