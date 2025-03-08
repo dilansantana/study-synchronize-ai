@@ -4,6 +4,7 @@ import Layout from '@/components/Layout';
 import ContentAggregator from '@/components/ContentAggregator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import StudyPlanGenerator from '@/components/learning/StudyPlanGenerator';
+import SavedGuides from '@/components/learning/SavedGuides';
 
 const LearningPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("resources");
@@ -22,13 +23,18 @@ const LearningPage: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6">
+        <TabsList className="grid w-full grid-cols-3 mb-6">
           <TabsTrigger value="resources">Learning Resources</TabsTrigger>
+          <TabsTrigger value="guides">My Guides</TabsTrigger>
           <TabsTrigger value="studyplan">Study Plan Generator</TabsTrigger>
         </TabsList>
         
         <TabsContent value="resources">
           <ContentAggregator />
+        </TabsContent>
+        
+        <TabsContent value="guides">
+          <SavedGuides />
         </TabsContent>
         
         <TabsContent value="studyplan">

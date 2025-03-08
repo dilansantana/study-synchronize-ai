@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,51 +57,37 @@ export const UltimateGuideGenerator: React.FC<UltimateGuideGeneratorProps> = ({ 
     setProgress(0);
 
     try {
-      // Gather YouTube captions first
       const selectedResourcesList = availableResources.filter(resource => selectedResources.includes(resource.id));
       const youtubeResources = selectedResourcesList.filter(resource => resource.source === 'youtube');
       
-      // Create a map to store captions for each YouTube resource
       const captionsData: Record<string, string> = {};
       
-      // Process each YouTube resource to fetch captions
-      const totalSteps = 10;
-      const youtubeStepsPercent = youtubeResources.length > 0 ? 40 : 0;
-      const remainingStepsPercent = 100 - youtubeStepsPercent;
-      
-      // Fetch captions for YouTube videos
       if (youtubeResources.length > 0) {
         for (let i = 0; i < youtubeResources.length; i++) {
           const resource = youtubeResources[i];
           const videoId = extractYouTubeVideoId(resource.url);
           
           if (videoId) {
-            // Update progress as we process each YouTube video
-            setProgress(Math.floor((i / youtubeResources.length) * youtubeStepsPercent));
+            setProgress(Math.floor((i / youtubeResources.length) * 40));
             
-            // Fetch captions
             const captions = await fetchYouTubeCaptions(videoId);
             if (captions) {
               captionsData[resource.id] = captions;
             }
           }
           
-          // Add a small delay to simulate processing
           await new Promise(resolve => setTimeout(resolve, 300));
         }
       }
       
-      // Store the captions map
       setCaptionsMap(captionsData);
       
-      // Simulate remaining extraction process
-      for (let i = 1; i <= totalSteps; i++) {
+      for (let i = 1; i <= 10; i++) {
         await new Promise(resolve => setTimeout(resolve, 300));
-        const progressPercent = youtubeStepsPercent + (i * (remainingStepsPercent / totalSteps));
+        const progressPercent = 40 + (i * 10);
         setProgress(Math.min(progressPercent, 100));
       }
 
-      // Create the new guide
       const newGuide: ContentItem = {
         id: `guide-${Date.now()}`,
         title: guideName,
@@ -115,15 +100,17 @@ export const UltimateGuideGenerator: React.FC<UltimateGuideGeneratorProps> = ({ 
         content: generateMockContent(selectedResources, availableResources, captionsData)
       };
 
-      // Store the guide
       ultimateGuides[newGuide.id] = newGuide;
       setGeneratedGuide(newGuide);
-      setActiveTab('preview');
-
+      
       toast({
         title: "Guide generated",
         description: `Successfully created "${guideName}" ultimate guide`
       });
+      
+      setTimeout(() => {
+        navigate(`/guide/${newGuide.id}`);
+      }, 1000);
     } catch (error) {
       console.error('Error generating guide:', error);
       toast({
@@ -151,16 +138,13 @@ export const UltimateGuideGenerator: React.FC<UltimateGuideGeneratorProps> = ({ 
       content += `## Section ${index + 1}: ${resource.title}\n`;
       content += `Source: ${resource.source.toUpperCase()} | Author: ${resource.author || 'Unknown'}\n\n`;
       
-      // Generate content based on resource type
       switch (resource.source) {
         case 'youtube':
-          // Use the captions if available
           if (captionsData[resource.id]) {
             content += `Content extracted from YouTube captions:\n\n`;
             content += captionsData[resource.id];
             content += `\n\n`;
           } else {
-            // Fallback if captions are not available
             content += `Key points from this video:\n`;
             content += `- Understanding core concepts of ${guideName} presented by ${resource.author}\n`;
             content += `- Practical demonstrations of implementation techniques\n`;
@@ -215,7 +199,6 @@ export const UltimateGuideGenerator: React.FC<UltimateGuideGeneratorProps> = ({ 
       description: "Redirecting to flashcards with pre-populated content"
     });
     
-    // Navigate to flashcards page with guide content
     navigate('/flashcards', { state: { guideContent: generatedGuide.content } });
   };
 
@@ -227,7 +210,6 @@ export const UltimateGuideGenerator: React.FC<UltimateGuideGeneratorProps> = ({ 
       description: "Redirecting to quiz generator with pre-populated content"
     });
     
-    // Navigate to quiz page with guide content
     navigate('/quiz', { state: { guideContent: generatedGuide.content } });
   };
 

@@ -9,6 +9,7 @@ import DashboardPage from "./pages/DashboardPage";
 import LearningPage from "./pages/LearningPage";
 import FlashcardsPage from "./pages/FlashcardsPage";
 import QuizPage from "./pages/QuizPage";
+import GuidePage from "./pages/GuidePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/learning" element={<LearningPage />} />
           <Route path="/flashcards" element={<FlashcardsPage />} />
           <Route path="/quiz" element={<QuizPage />} />
+          <Route path="/guide/:guideId" element={<GuidePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
