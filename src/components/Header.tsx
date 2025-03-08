@@ -1,83 +1,129 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Book, Home, FlaskConical, FileText, Brain } from 'lucide-react';
-import { cn } from "@/lib/utils";
 
-const Header: React.FC = () => {
-  const location = useLocation();
-  const [scrolled, setScrolled] = useState(false);
+import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import { Button } from './ui/button';
+import { Menu, X, Book, Home, GraduationCap, BookOpen, Award, CreditCard } from 'lucide-react';
+import { useMobile } from '@/hooks/use-mobile';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Badge } from './ui/badge';
 
-  // Handle scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      const isScrolled = window.scrollY > 10;
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
-      }
-    };
+export default function Header() {
+  const isMobile = useMobile();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [scrolled]);
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
 
-  const navItems = [
-    { name: 'Home', path: '/', icon: <Home className="w-4 h-4" /> },
-    { name: 'Dashboard', path: '/dashboard', icon: <Brain className="w-4 h-4" /> },
-    { name: 'Learning', path: '/learning', icon: <Book className="w-4 h-4" /> },
-    { name: 'Flashcards', path: '/flashcards', icon: <FileText className="w-4 h-4" /> },
-    { name: 'Quiz', path: '/quiz', icon: <FlaskConical className="w-4 h-4" /> },
+  const links = [
+    { to: '/dashboard', label: 'Dashboard', icon: <Home className="w-4 h-4 mr-2" /> },
+    { to: '/learning', label: 'Learning Resources', icon: <Book className="w-4 h-4 mr-2" /> },
+    { to: '/certification/comptia-security-plus', label: 'Security+', icon: <Award className="w-4 h-4 mr-2" /> },
+    { to: '/certification/cisco-ccna', label: 'CCNA', icon: <Award className="w-4 h-4 mr-2" /> },
+    { to: '/flashcards', label: 'Flashcards', icon: <BookOpen className="w-4 h-4 mr-2" /> },
+    { to: '/quiz', label: 'Quiz', icon: <GraduationCap className="w-4 h-4 mr-2" /> },
+    { to: '/subscription', label: 'Subscription', icon: <CreditCard className="w-4 h-4 mr-2" /> },
   ];
 
   return (
-    <header className={cn(
-      "sticky top-0 z-50 w-full transition-all duration-300",
-      scrolled ? "bg-background/80 backdrop-blur-md shadow-sm" : "bg-transparent"
-    )}>
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="relative flex h-10 w-10 overflow-hidden rounded-full bg-gradient-to-br from-primary to-accent">
-              <span className="flex h-full w-full items-center justify-center text-white font-bold text-xl">
-                A
-              </span>
-            </span>
-            <span className="font-semibold text-xl">AI Certification Master</span>
-          </Link>
-
-          <nav className="hidden md:flex space-x-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={cn(
-                  "px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  "flex items-center space-x-1",
-                  location.pathname === item.path
-                    ? "bg-secondary text-foreground"
-                    : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
-                )}
-              >
-                {item.icon}
-                <span>{item.name}</span>
-              </Link>
-            ))}
-          </nav>
-
-          <div className="md:hidden">
-            {/* Mobile menu button - we'll keep it simple for now */}
-            <button className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary/50">
-              <span className="sr-only">Open menu</span>
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
+    <header className="border-b">
+      <div className="container flex h-16 items-center justify-between px-4 sm:px-8">
+        <div className="flex items-center">
+          <NavLink to="/" className="flex items-center gap-2 font-bold">
+            <GraduationCap className="h-5 w-5" />
+            <span className="text-xl font-semibold">CertifyMaster</span>
+          </NavLink>
+          
+          {!isMobile && (
+            <nav className="ml-8 hidden md:block">
+              <ul className="flex gap-6">
+                {links.map((link) => (
+                  <li key={link.to}>
+                    <NavLink
+                      to={link.to}
+                      className={({ isActive }) =>
+                        `text-sm font-medium transition-colors hover:text-primary ${
+                          isActive ? 'text-primary' : 'text-muted-foreground'
+                        }`
+                      }
+                    >
+                      {link.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative rounded-full h-8 w-8 p-0">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="" alt="User" />
+                  <AvatarFallback className="bg-primary/10 text-primary">U</AvatarFallback>
+                </Avatar>
+                <Badge className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary p-0 text-[10px] text-primary-foreground">3</Badge>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <NavLink to="/dashboard" className="flex w-full">Profile</NavLink>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <NavLink to="/subscription" className="flex w-full">Subscription</NavLink>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Log out</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          {isMobile && (
+            <Button variant="ghost" size="icon" onClick={toggleMobileMenu}>
+              {mobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </Button>
+          )}
         </div>
       </div>
+      
+      {/* Mobile menu */}
+      {isMobile && mobileMenuOpen && (
+        <nav className="border-t py-4 px-4 sm:px-8 bg-background">
+          <ul className="space-y-3">
+            {links.map((link) => (
+              <li key={link.to}>
+                <NavLink
+                  to={link.to}
+                  className={({ isActive }) =>
+                    `flex items-center py-2 text-sm font-medium transition-colors hover:text-primary ${
+                      isActive ? 'text-primary' : 'text-muted-foreground'
+                    }`
+                  }
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.icon}
+                  {link.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
     </header>
   );
-};
-
-export default Header;
+}
