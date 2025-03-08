@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button } from './ui/button';
-import { Menu, X, Book, Home, GraduationCap, BookOpen, CreditCard } from 'lucide-react';
+import { Menu, X, Book, BookOpen, GraduationCap, CreditCard } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
@@ -23,8 +24,9 @@ export default function Header() {
   };
 
   const links = [
-    { to: '/dashboard', label: 'Dashboard', icon: <Home className="w-4 h-4 mr-2" /> },
     { to: '/learning', label: 'Learning Resources', icon: <Book className="w-4 h-4 mr-2" /> },
+    { to: '/certification/comptia-security-plus', label: 'Security+', icon: <BookOpen className="w-4 h-4 mr-2" /> },
+    { to: '/certification/cisco-ccna', label: 'CCNA', icon: <BookOpen className="w-4 h-4 mr-2" /> },
     { to: '/flashcards', label: 'Flashcards', icon: <BookOpen className="w-4 h-4 mr-2" /> },
     { to: '/quiz', label: 'Quiz', icon: <GraduationCap className="w-4 h-4 mr-2" /> },
     { to: '/subscription', label: 'Subscription', icon: <CreditCard className="w-4 h-4 mr-2" /> },
@@ -34,7 +36,7 @@ export default function Header() {
     <header className="border-b">
       <div className="container flex h-16 items-center justify-between px-4 sm:px-8">
         <div className="flex items-center">
-          <NavLink to="/" className="flex items-center gap-2 font-bold">
+          <NavLink to="/learning" className="flex items-center gap-2 font-bold">
             <GraduationCap className="h-5 w-5" />
             <span className="text-xl font-semibold">CertifyMaster</span>
           </NavLink>
@@ -75,9 +77,6 @@ export default function Header() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <NavLink to="/dashboard" className="flex w-full">Profile</NavLink>
-              </DropdownMenuItem>
               <DropdownMenuItem>
                 <NavLink to="/subscription" className="flex w-full">Subscription</NavLink>
               </DropdownMenuItem>

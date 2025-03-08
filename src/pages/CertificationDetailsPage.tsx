@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -24,7 +23,6 @@ const CertificationDetailsPage: React.FC = () => {
   const { addCertification } = useUserProgress();
   const [activeTab, setActiveTab] = useState<string>("overview");
   
-  // This would normally come from an API based on the certificationId
   const certificationName = certificationId?.includes('comptia') 
     ? 'CompTIA Security+' 
     : certificationId?.includes('ccna') 
@@ -57,7 +55,7 @@ const CertificationDetailsPage: React.FC = () => {
               {certificationName}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Comprehensive learning resources and study path
+              Comprehensive learning resources and certification pathway
             </p>
           </div>
           
@@ -114,12 +112,11 @@ const CertificationDetailsPage: React.FC = () => {
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full">
+          <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="resources">Resources</TabsTrigger>
             <TabsTrigger value="path">Learning Path</TabsTrigger>
             <TabsTrigger value="practice">Practice</TabsTrigger>
-            <TabsTrigger value="assistant">AI Assistant</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview" className="space-y-6">

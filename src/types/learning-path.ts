@@ -32,3 +32,33 @@ export type SoftColors = {
   'soft-gray': string;
   'dark-charcoal': string;
 }
+
+// Certification pathway types
+export interface CertificationPathway {
+  id: string;
+  name: string;
+  description: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  estimatedDuration: string;
+  prerequisites: string[];
+  steps: LearningStep[];
+}
+
+export interface CertificationDetails {
+  id: string;
+  name: string;
+  description: string;
+  vendor: string;
+  examCode: string;
+  examCost: string;
+  validityPeriod: string;
+  recommendedExperience: string;
+  jobRoles: string[];
+  domains: CertificationDomain[];
+}
+
+export interface CertificationDomain {
+  name: string;
+  percentage: number;
+  topics: string[];
+}
