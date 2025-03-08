@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,26 +18,170 @@ import { Badge } from "@/components/ui/badge";
 import { GraduationCap, BookOpen, BarChart, CreditCard, Calendar, Shield, CheckCircle, Award } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+interface CertificationInfo {
+  name: string;
+  duration: string;
+  difficulty: string;
+  examCost: string;
+  examCode: string;
+  passingScore: string;
+  validity: string;
+}
+
 const CertificationDetailsPage: React.FC = () => {
   const { certificationId } = useParams<{ certificationId: string }>();
   const { toast } = useToast();
   const { addCertification } = useUserProgress();
   const [activeTab, setActiveTab] = useState<string>("overview");
+  const [certificationInfo, setCertificationInfo] = useState<CertificationInfo>({
+    name: '',
+    duration: '60 - 90 days',
+    difficulty: 'Intermediate',
+    examCost: '$350 USD',
+    examCode: '',
+    passingScore: '',
+    validity: '3 years'
+  });
   
-  const certificationName = certificationId?.includes('comptia') 
-    ? 'CompTIA Security+' 
-    : certificationId?.includes('ccna') 
-    ? 'Cisco CCNA' 
-    : certificationId || 'Certification';
+  useEffect(() => {
+    // Set certification details based on the certification ID
+    if (certificationId) {
+      let info: CertificationInfo = {
+        name: formatCertificationName(certificationId),
+        duration: '60 - 90 days',
+        difficulty: 'Intermediate',
+        examCost: '$350 USD',
+        examCode: '',
+        passingScore: '',
+        validity: '3 years'
+      };
+      
+      // Set specific details based on certification type
+      if (certificationId.includes('comptia')) {
+        if (certificationId.includes('security-plus')) {
+          info = {
+            ...info,
+            name: 'CompTIA Security+',
+            examCost: '$392 USD',
+            examCode: 'SY0-601',
+            passingScore: '750 on a scale of 100-900',
+            validity: '3 years (renewable through continuing education)'
+          };
+        } else if (certificationId.includes('network-plus')) {
+          info = {
+            ...info,
+            name: 'CompTIA Network+',
+            examCost: '$358 USD',
+            examCode: 'N10-008',
+            passingScore: '720 on a scale of 100-900',
+            validity: '3 years (renewable through continuing education)'
+          };
+        } else if (certificationId.includes('a-plus')) {
+          info = {
+            ...info,
+            name: 'CompTIA A+',
+            examCost: '$239 USD per exam (2 exams required)',
+            examCode: '220-1101 & 220-1102',
+            passingScore: '675/700 on a scale of 100-900',
+            validity: '3 years (renewable through continuing education)'
+          };
+        }
+      } else if (certificationId.includes('cisco') || certificationId.includes('ccna')) {
+        info = {
+          ...info,
+          name: 'Cisco CCNA',
+          examCost: '$300 USD',
+          examCode: '200-301',
+          passingScore: '825 on a scale of 300-1000',
+          validity: '3 years (renewable through examination)'
+        };
+      } else if (certificationId.includes('aws')) {
+        if (certificationId.includes('solutions-architect')) {
+          info = {
+            ...info,
+            name: 'AWS Solutions Architect',
+            examCost: '$150 USD (Associate) / $300 USD (Professional)',
+            examCode: 'SAA-C03 (Associate) / SAP-C02 (Professional)',
+            passingScore: 'Scaled score of 720 out of 1000',
+            validity: '3 years (renewable through examination)'
+          };
+        } else {
+          info = {
+            ...info,
+            name: 'AWS Certification',
+            examCost: '$100-$300 USD (varies by level)',
+            validity: '3 years (renewable through examination)'
+          };
+        }
+      } else if (certificationId.includes('microsoft') || certificationId.includes('azure')) {
+        info = {
+          ...info,
+          name: 'Microsoft Azure Administrator',
+          examCost: '$165 USD',
+          examCode: 'AZ-104',
+          passingScore: '700 on a scale of 1-1000',
+          validity: 'Does not expire'
+        };
+      } else if (certificationId.includes('pmp')) {
+        info = {
+          ...info,
+          name: 'Project Management Professional (PMP)',
+          examCost: '$405 USD (PMI member) / $555 USD (non-member)',
+          examCode: 'PMP',
+          passingScore: 'Performance-based (not a numerical score)',
+          validity: '3 years (renewable through PDUs)'
+        };
+      } else if (certificationId.includes('splunk')) {
+        info = {
+          ...info,
+          name: 'Splunk Certification',
+          examCost: '$125-$300 USD (varies by level)',
+          examCode: 'Varies by certification track',
+          difficulty: 'Beginner to Advanced (depends on level)',
+          passingScore: 'Typically 70-80%',
+          validity: '3 years'
+        };
+      } else if (certificationId.includes('cissp')) {
+        info = {
+          ...info,
+          name: 'CISSP (Certified Information Systems Security Professional)',
+          examCost: '$749 USD',
+          examCode: 'CISSP',
+          difficulty: 'Advanced',
+          passingScore: 'Scaled score of 700 out of 1000',
+          validity: '3 years (renewable through CPEs)'
+        };
+      } else if (certificationId.includes('ceh')) {
+        info = {
+          ...info,
+          name: 'Certified Ethical Hacker (CEH)',
+          examCost: '$950-$1,199 USD',
+          examCode: '312-50',
+          difficulty: 'Intermediate to Advanced',
+          passingScore: '70% or higher',
+          validity: '3 years (renewable through ECE credits)'
+        };
+      }
+      
+      setCertificationInfo(info);
+    }
+  }, [certificationId]);
   
-  const resources = generateResourcesForCertification(certificationName);
+  const formatCertificationName = (id: string): string => {
+    return id
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+  
+  const resources = generateResourcesForCertification(certificationInfo.name);
   
   const handleEnroll = () => {
-    addCertification(certificationName);
+    addCertification(certificationInfo.name);
     
     toast({
       title: "Successfully enrolled!",
-      description: `You've been enrolled in the ${certificationName} learning path.`,
+      description: `You've been enrolled in the ${certificationInfo.name} learning path.`,
       duration: 5000,
     });
   };
@@ -52,7 +197,7 @@ const CertificationDetailsPage: React.FC = () => {
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <Shield className="h-7 w-7 text-primary" />
-              {certificationName}
+              {certificationInfo.name}
             </h1>
             <p className="text-muted-foreground mt-1">
               Comprehensive learning resources and certification pathway
@@ -79,7 +224,7 @@ const CertificationDetailsPage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">60 - 90 days</p>
+              <p className="text-2xl font-bold">{certificationInfo.duration}</p>
               <p className="text-sm text-muted-foreground">Recommended study period</p>
             </CardContent>
           </Card>
@@ -92,7 +237,7 @@ const CertificationDetailsPage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">Intermediate</p>
+              <p className="text-2xl font-bold">{certificationInfo.difficulty}</p>
               <p className="text-sm text-muted-foreground">Prior IT experience recommended</p>
             </CardContent>
           </Card>
@@ -105,7 +250,7 @@ const CertificationDetailsPage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">$350 USD</p>
+              <p className="text-2xl font-bold">{certificationInfo.examCost}</p>
               <p className="text-sm text-muted-foreground">Official certification exam fee</p>
             </CardContent>
           </Card>
@@ -124,22 +269,28 @@ const CertificationDetailsPage: React.FC = () => {
               <div className="lg:col-span-2 space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>About {certificationName}</CardTitle>
+                    <CardTitle>About {certificationInfo.name}</CardTitle>
                     <CardDescription>Overview and industry relevance</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p>
-                      {certificationName === 'CompTIA Security+' 
+                      {certificationInfo.name === 'CompTIA Security+' 
                         ? 'CompTIA Security+ is a global certification that validates the baseline skills necessary to perform core security functions and pursue an IT security career. It is the first security certification IT professionals should earn.'
-                        : certificationName === 'Cisco CCNA'
+                        : certificationInfo.name === 'Cisco CCNA'
                         ? 'The Cisco CCNA certification validates your skills and knowledge in network fundamentals, network access, IP connectivity, IP services, security fundamentals, and automation and programmability.'
+                        : certificationInfo.name === 'Splunk Certification'
+                        ? 'Splunk certifications validate your ability to use Splunk for data analysis, management, and security. These certifications range from core user to architect levels, and help professionals demonstrate proficiency with Splunk tools and technologies.'
+                        : certificationInfo.name === 'CISSP'
+                        ? 'CISSP is a globally recognized certification for information security professionals. It covers eight domains of cybersecurity knowledge and requires at least five years of cumulative, paid work experience in two or more of these domains.'
+                        : certificationInfo.name === 'Certified Ethical Hacker'
+                        ? 'CEH is a certification that demonstrates proficiency in ethical hacking methodologies, tools, and techniques. It validates your ability to identify vulnerabilities in systems using the same knowledge and tools as malicious hackers.'
                         : 'This certification validates your baseline skills and knowledge in the relevant domain and provides a solid foundation for an IT career.'}
                     </p>
                     
                     <div className="space-y-2">
                       <h3 className="text-lg font-medium">Key Knowledge Areas:</h3>
                       <ul className="list-disc pl-6 space-y-1">
-                        {certificationName === 'CompTIA Security+' ? (
+                        {certificationInfo.name === 'CompTIA Security+' ? (
                           <>
                             <li>Threats, Attacks and Vulnerabilities</li>
                             <li>Technologies and Tools</li>
@@ -148,7 +299,7 @@ const CertificationDetailsPage: React.FC = () => {
                             <li>Risk Management</li>
                             <li>Cryptography and PKI</li>
                           </>
-                        ) : certificationName === 'Cisco CCNA' ? (
+                        ) : certificationInfo.name === 'Cisco CCNA' ? (
                           <>
                             <li>Network Fundamentals</li>
                             <li>Network Access</li>
@@ -156,6 +307,37 @@ const CertificationDetailsPage: React.FC = () => {
                             <li>IP Services</li>
                             <li>Security Fundamentals</li>
                             <li>Automation and Programmability</li>
+                          </>
+                        ) : certificationInfo.name === 'Splunk Certification' ? (
+                          <>
+                            <li>Data Ingestion and Processing</li>
+                            <li>Search and Reporting</li>
+                            <li>Dashboards and Visualizations</li>
+                            <li>Advanced Analytics</li>
+                            <li>Splunk Administration</li>
+                            <li>Security Monitoring</li>
+                          </>
+                        ) : certificationInfo.name === 'CISSP' ? (
+                          <>
+                            <li>Security and Risk Management</li>
+                            <li>Asset Security</li>
+                            <li>Security Architecture and Engineering</li>
+                            <li>Communication and Network Security</li>
+                            <li>Identity and Access Management</li>
+                            <li>Security Assessment and Testing</li>
+                            <li>Security Operations</li>
+                            <li>Software Development Security</li>
+                          </>
+                        ) : certificationInfo.name === 'Certified Ethical Hacker' ? (
+                          <>
+                            <li>Reconnaissance Techniques</li>
+                            <li>System Hacking</li>
+                            <li>Network and Perimeter Hacking</li>
+                            <li>Web Application Hacking</li>
+                            <li>Wireless Network Hacking</li>
+                            <li>Mobile Platform, IoT, and OT Hacking</li>
+                            <li>Cloud Computing</li>
+                            <li>Cryptography</li>
                           </>
                         ) : (
                           <>
@@ -172,7 +354,7 @@ const CertificationDetailsPage: React.FC = () => {
                     <div className="space-y-2">
                       <h3 className="text-lg font-medium">Job Roles:</h3>
                       <div className="flex flex-wrap gap-2">
-                        {certificationName === 'CompTIA Security+' ? (
+                        {certificationInfo.name === 'CompTIA Security+' ? (
                           <>
                             <Badge variant="secondary">Security Administrator</Badge>
                             <Badge variant="secondary">Security Specialist</Badge>
@@ -181,13 +363,38 @@ const CertificationDetailsPage: React.FC = () => {
                             <Badge variant="secondary">Network Administrator</Badge>
                             <Badge variant="secondary">Junior IT Auditor</Badge>
                           </>
-                        ) : certificationName === 'Cisco CCNA' ? (
+                        ) : certificationInfo.name === 'Cisco CCNA' ? (
                           <>
                             <Badge variant="secondary">Network Administrator</Badge>
                             <Badge variant="secondary">Network Engineer</Badge>
                             <Badge variant="secondary">Network Specialist</Badge>
                             <Badge variant="secondary">Network Analyst</Badge>
                             <Badge variant="secondary">Systems Engineer</Badge>
+                          </>
+                        ) : certificationInfo.name === 'Splunk Certification' ? (
+                          <>
+                            <Badge variant="secondary">Splunk Administrator</Badge>
+                            <Badge variant="secondary">Data Analyst</Badge>
+                            <Badge variant="secondary">Security Analyst</Badge>
+                            <Badge variant="secondary">DevOps Engineer</Badge>
+                            <Badge variant="secondary">IT Operations Specialist</Badge>
+                          </>
+                        ) : certificationInfo.name === 'CISSP' ? (
+                          <>
+                            <Badge variant="secondary">Security Manager</Badge>
+                            <Badge variant="secondary">Security Architect</Badge>
+                            <Badge variant="secondary">Security Director</Badge>
+                            <Badge variant="secondary">Security Analyst</Badge>
+                            <Badge variant="secondary">Security Consultant</Badge>
+                            <Badge variant="secondary">CISO</Badge>
+                          </>
+                        ) : certificationInfo.name === 'Certified Ethical Hacker' ? (
+                          <>
+                            <Badge variant="secondary">Penetration Tester</Badge>
+                            <Badge variant="secondary">Security Consultant</Badge>
+                            <Badge variant="secondary">Security Analyst</Badge>
+                            <Badge variant="secondary">Security Engineer</Badge>
+                            <Badge variant="secondary">Security Specialist</Badge>
                           </>
                         ) : (
                           <>
@@ -202,7 +409,7 @@ const CertificationDetailsPage: React.FC = () => {
                   </CardContent>
                 </Card>
                 
-                <CertificationRoadmap certificationName={certificationName} />
+                <CertificationRoadmap certificationName={certificationInfo.name} />
               </div>
               
               <div className="space-y-6">
@@ -220,10 +427,8 @@ const CertificationDetailsPage: React.FC = () => {
                     <div className="space-y-1">
                       <h3 className="text-sm font-semibold">Exam Details:</h3>
                       <p className="text-sm">
-                        {certificationName === 'CompTIA Security+' 
-                          ? 'Exam Code: SY0-601 | 90 questions | 90 minutes'
-                          : certificationName === 'Cisco CCNA'
-                          ? 'Exam Code: 200-301 | 100-120 questions | 120 minutes'
+                        {certificationInfo.examCode 
+                          ? `Exam Code: ${certificationInfo.examCode} | ${certificationInfo.name.includes('A+') ? 'Two exams required' : '90-120 questions'} | 90-120 minutes`
                           : 'Standard certification exam format with multiple-choice and performance-based questions'}
                       </p>
                     </div>
@@ -231,11 +436,7 @@ const CertificationDetailsPage: React.FC = () => {
                     <div className="space-y-1">
                       <h3 className="text-sm font-semibold">Passing Score:</h3>
                       <p className="text-sm">
-                        {certificationName === 'CompTIA Security+' 
-                          ? '750 on a scale of 100-900'
-                          : certificationName === 'Cisco CCNA'
-                          ? '825 on a scale of 300-1000'
-                          : 'Varies by exam, typically 70-80%'}
+                        {certificationInfo.passingScore || 'Varies by exam, typically 70-80%'}
                       </p>
                     </div>
                     
@@ -247,11 +448,7 @@ const CertificationDetailsPage: React.FC = () => {
                     <div className="space-y-1">
                       <h3 className="text-sm font-semibold">Certification Validity:</h3>
                       <p className="text-sm">
-                        {certificationName === 'CompTIA Security+' 
-                          ? '3 years (renewable through continuing education)'
-                          : certificationName === 'Cisco CCNA'
-                          ? '3 years (renewable through examination)'
-                          : 'Typically 2-3 years, renewable through continuing education or re-examination'}
+                        {certificationInfo.validity || 'Typically 2-3 years, renewable through continuing education or re-examination'}
                       </p>
                     </div>
                   </CardContent>
@@ -271,19 +468,19 @@ const CertificationDetailsPage: React.FC = () => {
           </TabsContent>
           
           <TabsContent value="path" className="space-y-6">
-            <PersonalizedPath certificationName={certificationName} />
+            <PersonalizedPath certificationName={certificationInfo.name} />
           </TabsContent>
           
           <TabsContent value="practice" className="space-y-6">
             <InteractiveFlashcards 
-              title={`${certificationName} Flashcards`}
+              title={`${certificationInfo.name} Flashcards`}
               description="Test your knowledge with interactive flashcards"
-              certificationName={certificationName}
+              certificationName={certificationInfo.name}
             />
           </TabsContent>
           
           <TabsContent value="assistant" className="space-y-6">
-            <AIAssistant certificationContext={certificationName} />
+            <AIAssistant certificationContext={certificationInfo.name} />
           </TabsContent>
         </Tabs>
       </div>
