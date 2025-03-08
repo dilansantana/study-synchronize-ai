@@ -77,7 +77,7 @@ export const ResourceSelectionList: React.FC<ResourceSelectionListProps> = ({
                   <p className="text-xs text-muted-foreground">{resource.description}</p>
                 </div>
               </div>
-            ))
+            ))}
           </>
         ) : (
           <div className="p-4 text-center text-muted-foreground">
