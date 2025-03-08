@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { FileText, Lightbulb } from "lucide-react";
+import { FileText, Lightbulb, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ContentItem } from "@/data/learningResources";
 
 interface GuideHeaderProps {
