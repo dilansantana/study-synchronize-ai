@@ -1,7 +1,7 @@
 
 import React from 'react';
 import AnimatedTransition from '../AnimatedTransition';
-import { Activity } from '@/utils/progressUtils';
+import { RecentActivity as Activity } from '@/utils/progressUtils';
 
 interface RecentActivityProps {
   activities: Activity[];
