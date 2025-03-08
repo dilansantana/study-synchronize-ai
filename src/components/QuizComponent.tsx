@@ -16,11 +16,19 @@ interface QuizQuestion {
 interface QuizComponentProps {
   className?: string;
   timeLimit?: number; // in seconds
+  questionCount?: number; // Added to match the props being passed
+  difficulty?: string; // Added to match the props being passed
+  certificationName?: string; // Added to match the props being passed
+  title?: string; // Added to match the props being passed
 }
 
 const QuizComponent: React.FC<QuizComponentProps> = ({ 
   className,
-  timeLimit = 60
+  timeLimit = 60,
+  questionCount = 10, // Default value if not provided
+  difficulty = 'mixed', // Default value if not provided
+  certificationName,
+  title = "Practice Quiz" // Default value if not provided
 }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -536,7 +544,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
         <>
           <div className="flex justify-between items-center">
             <AnimatedTransition animation="fade" className="space-y-1">
-              <h2 className="text-xl font-semibold">Practice Quiz</h2>
+              <h2 className="text-xl font-semibold">{title}</h2>
               <p className="text-sm text-muted-foreground">
                 Question {currentQuestionIndex + 1} of {questions.length}
               </p>
