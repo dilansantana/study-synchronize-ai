@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ContentItem, initialContentItems, additionalResources } from '@/data/learningResources';
 import { useToast } from "@/hooks/use-toast";
@@ -75,6 +74,16 @@ export const useLearningSearch = () => {
             author: 'Various',
             date: new Date().toISOString().split('T')[0],
             rating: 4.7
+          },
+          {
+            id: `comptia-quizlet-${Date.now()}`,
+            title: `${examType} Certification Quizlet Flashcards`,
+            source: 'quizlet',
+            description: `Comprehensive flashcard sets for ${examType} exam preparation with terms, concepts, and practice questions.`,
+            url: `https://quizlet.com/subject/${encodeURIComponent(examType.toLowerCase())}`,
+            author: 'Quizlet Community',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.8
           }
         ];
       } else if (certKey.includes('cisco') || certKey.includes('ccna')) {
@@ -110,6 +119,16 @@ export const useLearningSearch = () => {
             author: 'Various',
             date: new Date().toISOString().split('T')[0],
             rating: 4.7
+          },
+          {
+            id: `cisco-quizlet-${Date.now()}`,
+            title: `CCNA Quizlet Study Sets`,
+            source: 'quizlet',
+            description: `Comprehensive flashcards and study sets for CCNA exam preparation.`,
+            url: 'https://quizlet.com/subject/ccna/',
+            author: 'Quizlet Community',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.8
           }
         ];
       }
@@ -167,6 +186,16 @@ export const useLearningSearch = () => {
             url: 'https://www.youtube.com/results?search_query=' + encodeURIComponent(searchQuery + ' certification bootcamp'),
             duration: '8h 15m',
             author: 'Certification Academy',
+            date: new Date().toISOString().split('T')[0],
+            rating: 4.7
+          },
+          {
+            id: `gen-quizlet-${Date.now()}`,
+            title: `${capitalizedSearch} Certification Quizlet Flashcards`,
+            source: 'quizlet',
+            description: `Study flashcards and memory aids for ${capitalizedSearch} certification exam preparation.`,
+            url: 'https://quizlet.com/search?query=' + encodeURIComponent(searchQuery + ' certification'),
+            author: 'Quizlet Community',
             date: new Date().toISOString().split('T')[0],
             rating: 4.7
           }

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Filter, Globe, Youtube, FileText, MessageSquare } from 'lucide-react';
+import { Filter, Globe, Youtube, FileText, MessageSquare, BookOpenCheck } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 export interface FilterOption {
@@ -21,6 +21,7 @@ export const ResourceFilters: React.FC<ResourceFiltersProps> = ({ activeFilter, 
     { id: 'article', label: 'Articles', icon: <FileText className="w-4 h-4" /> },
     { id: 'forum', label: 'Forums', icon: <MessageSquare className="w-4 h-4" /> },
     { id: 'document', label: 'Documents', icon: <FileText className="w-4 h-4" /> },
+    { id: 'quizlet', label: 'Flashcards', icon: <BookOpenCheck className="w-4 h-4" /> },
   ];
 
   return (

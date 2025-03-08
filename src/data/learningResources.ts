@@ -1,8 +1,7 @@
-
 export interface ContentItem {
   id: string;
   title: string;
-  source: 'youtube' | 'article' | 'forum' | 'document';
+  source: 'youtube' | 'article' | 'forum' | 'document' | 'quizlet';
   description: string;
   url: string;
   duration?: string;
@@ -100,6 +99,16 @@ export const additionalResources: Record<string, ContentItem[]> = {
       author: 'r/AWSCertifications',
       date: '2023-05-05',
       rating: 4.5
+    },
+    {
+      id: 'aws-quizlet',
+      title: 'AWS Certification Quizlet Flashcards',
+      source: 'quizlet',
+      description: 'Comprehensive flashcards for AWS certification exam preparation with practice questions and memory aids.',
+      url: 'https://quizlet.com/subject/aws-certification/',
+      author: 'Quizlet Community',
+      date: '2023-10-05',
+      rating: 4.8
     }
   ],
   okta: [
@@ -123,6 +132,16 @@ export const additionalResources: Record<string, ContentItem[]> = {
       author: 'Okta Inc.',
       date: '2023-04-15',
       rating: 4.8
+    },
+    {
+      id: 'okta-quizlet',
+      title: 'Okta Certified Professional Flashcards',
+      source: 'quizlet',
+      description: 'Study flashcards with key concepts and practice questions for the Okta certification exams.',
+      url: 'https://quizlet.com/subject/okta-certification/',
+      author: 'Quizlet Community',
+      date: '2023-09-18',
+      rating: 4.7
     }
   ],
   azure: [
@@ -146,6 +165,16 @@ export const additionalResources: Record<string, ContentItem[]> = {
       author: 'Microsoft',
       date: '2023-07-14',
       rating: 4.7
+    },
+    {
+      id: 'azure-quizlet',
+      title: 'Microsoft Azure Certification Quizlet Sets',
+      source: 'quizlet',
+      description: 'Comprehensive flashcard sets for various Azure certification exams with practice questions.',
+      url: 'https://quizlet.com/subject/microsoft-azure/',
+      author: 'Quizlet Community',
+      date: '2023-10-12',
+      rating: 4.8
     }
   ]
 };

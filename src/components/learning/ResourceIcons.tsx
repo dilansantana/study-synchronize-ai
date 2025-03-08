@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Youtube, FileText, MessageSquare, Globe } from 'lucide-react';
+import { Youtube, FileText, MessageSquare, Globe, BookOpenCheck } from 'lucide-react';
 
 export const Clock = ({ className }: { className?: string }) => {
   return <div className={className}>
@@ -38,6 +37,8 @@ export const getSourceIcon = (source: string) => {
       return <MessageSquare className="w-4 h-4 text-green-500" />;
     case 'document':
       return <FileText className="w-4 h-4 text-amber-500" />;
+    case 'quizlet':
+      return <BookOpenCheck className="w-4 h-4 text-purple-500" />;
     default:
       return <Globe className="w-4 h-4 text-gray-500" />;
   }
