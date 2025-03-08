@@ -2,15 +2,14 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ContentItem, ultimateGuides } from "@/data/learningResources";
-import { Progress } from "@/components/ui/progress";
-import { getSourceIcon } from './ResourceIcons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from 'react-router-dom';
+import { ResourceSelectionList } from './ResourceSelectionList';
+import { GenerationProgress } from './GenerationProgress';
+import { GuidePreview } from './GuidePreview';
+import { GuideNameInput } from './GuideNameInput';
 
 interface UltimateGuideGeneratorProps {
   availableResources: ContentItem[];
@@ -186,90 +185,30 @@ export const UltimateGuideGenerator: React.FC<UltimateGuideGeneratorProps> = ({ 
           
           <TabsContent value="select" className="space-y-4">
             <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium">Guide Name</label>
-                <Input
-                  value={guideName}
-                  onChange={(e) => setGuideName(e.target.value)}
-                  placeholder="e.g., AWS Solutions Architect Ultimate Guide"
-                  className="mt-1"
-                />
-              </div>
+              <GuideNameInput 
+                guideName={guideName}
+                onChange={setGuideName}
+              />
               
-              <div>
-                <label className="text-sm font-medium">Select Resources to Extract From</label>
-                <div className="mt-2 space-y-2 max-h-80 overflow-y-auto border rounded-md p-2">
-                  {availableResources.length > 0 ? (
-                    availableResources.map((resource) => (
-                      <div key={resource.id} className="flex items-start space-x-2 p-2 hover:bg-secondary/50 rounded-md">
-                        <Checkbox 
-                          id={`resource-${resource.id}`}
-                          checked={selectedResources.includes(resource.id)}
-                          onCheckedChange={() => handleResourceToggle(resource.id)}
-                        />
-                        <div className="flex-1">
-                          <label 
-                            htmlFor={`resource-${resource.id}`}
-                            className="text-sm font-medium cursor-pointer flex items-center gap-2"
-                          >
-                            {getSourceIcon(resource.source)}
-                            {resource.title}
-                          </label>
-                          <p className="text-xs text-muted-foreground">{resource.description}</p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-4 text-center text-muted-foreground">
-                      <p>No resources available. Search for certification resources to get started.</p>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <ResourceSelectionList
+                availableResources={availableResources}
+                selectedResources={selectedResources}
+                onResourceToggle={handleResourceToggle}
+              />
               
-              {isGenerating && (
-                <div className="space-y-2">
-                  <p className="text-sm">Extracting information from selected resources...</p>
-                  <Progress value={progress} className="h-2" />
-                </div>
-              )}
+              <GenerationProgress 
+                isGenerating={isGenerating}
+                progress={progress}
+              />
             </div>
           </TabsContent>
           
           <TabsContent value="preview" className="space-y-4">
-            {generatedGuide && (
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-bold">{generatedGuide.title}</h3>
-                  <p className="text-sm text-muted-foreground">{generatedGuide.description}</p>
-                </div>
-                
-                <div className="border rounded-md p-4 bg-secondary/20">
-                  <Textarea 
-                    className="font-mono h-[300px] overflow-y-auto" 
-                    value={generatedGuide.content}
-                    readOnly
-                  />
-                </div>
-                
-                <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
-                  <Button
-                    onClick={handleCreateFlashcards}
-                    variant="outline"
-                    className="flex-1"
-                  >
-                    Create Flashcards
-                  </Button>
-                  <Button
-                    onClick={handleCreateQuiz}
-                    variant="outline"
-                    className="flex-1"
-                  >
-                    Create Quiz
-                  </Button>
-                </div>
-              </div>
-            )}
+            <GuidePreview
+              generatedGuide={generatedGuide}
+              onCreateFlashcards={handleCreateFlashcards}
+              onCreateQuiz={handleCreateQuiz}
+            />
           </TabsContent>
         </Tabs>
       </CardContent>

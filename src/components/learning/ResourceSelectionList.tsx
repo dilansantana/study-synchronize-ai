@@ -1,0 +1,50 @@
+
+import React from 'react';
+import { Checkbox } from "@/components/ui/checkbox";
+import { ContentItem } from "@/data/learningResources";
+import { getSourceIcon } from './ResourceIcons';
+
+interface ResourceSelectionListProps {
+  availableResources: ContentItem[];
+  selectedResources: string[];
+  onResourceToggle: (id: string) => void;
+}
+
+export const ResourceSelectionList: React.FC<ResourceSelectionListProps> = ({
+  availableResources,
+  selectedResources,
+  onResourceToggle
+}) => {
+  return (
+    <div>
+      <label className="text-sm font-medium">Select Resources to Extract From</label>
+      <div className="mt-2 space-y-2 max-h-80 overflow-y-auto border rounded-md p-2">
+        {availableResources.length > 0 ? (
+          availableResources.map((resource) => (
+            <div key={resource.id} className="flex items-start space-x-2 p-2 hover:bg-secondary/50 rounded-md">
+              <Checkbox 
+                id={`resource-${resource.id}`}
+                checked={selectedResources.includes(resource.id)}
+                onCheckedChange={() => onResourceToggle(resource.id)}
+              />
+              <div className="flex-1">
+                <label 
+                  htmlFor={`resource-${resource.id}`}
+                  className="text-sm font-medium cursor-pointer flex items-center gap-2"
+                >
+                  {getSourceIcon(resource.source)}
+                  {resource.title}
+                </label>
+                <p className="text-xs text-muted-foreground">{resource.description}</p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="p-4 text-center text-muted-foreground">
+            <p>No resources available. Search for certification resources to get started.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
