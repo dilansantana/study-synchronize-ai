@@ -17,13 +17,29 @@ const PopularCertifications: React.FC<PopularCertificationsProps> = ({
   certifications,
   onSelect
 }) => {
+  // Make sure the click handler gets triggered consistently
+  const handleCardClick = (certId: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onSelect(certId);
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {certifications.map(cert => (
         <Card 
           key={cert.id} 
           className="cursor-pointer hover:bg-muted/50 transition-colors" 
-          onClick={() => onSelect(cert.id)}
+          onClick={(e) => handleCardClick(cert.id, e)}
+          role="button"
+          tabIndex={0}
+          aria-label={`Explore ${cert.name} certification`}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onSelect(cert.id);
+            }
+          }}
         >
           <CardContent className="p-4">
             <div className="flex flex-col gap-1">
