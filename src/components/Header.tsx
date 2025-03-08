@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button } from './ui/button';
-import { Menu, X, Book, Home, GraduationCap, BookOpen, Award, CreditCard } from 'lucide-react';
+import { Menu, X, Book, Home, GraduationCap, BookOpen, CreditCard } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
@@ -26,8 +25,6 @@ export default function Header() {
   const links = [
     { to: '/dashboard', label: 'Dashboard', icon: <Home className="w-4 h-4 mr-2" /> },
     { to: '/learning', label: 'Learning Resources', icon: <Book className="w-4 h-4 mr-2" /> },
-    { to: '/certification/comptia-security-plus', label: 'Security+', icon: <Award className="w-4 h-4 mr-2" /> },
-    { to: '/certification/cisco-ccna', label: 'CCNA', icon: <Award className="w-4 h-4 mr-2" /> },
     { to: '/flashcards', label: 'Flashcards', icon: <BookOpen className="w-4 h-4 mr-2" /> },
     { to: '/quiz', label: 'Quiz', icon: <GraduationCap className="w-4 h-4 mr-2" /> },
     { to: '/subscription', label: 'Subscription', icon: <CreditCard className="w-4 h-4 mr-2" /> },
