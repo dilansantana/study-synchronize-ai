@@ -31,7 +31,7 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setCertificationQuery(value);
-    setShowSuggestions(value.length > 2 && suggestions.length > 0);
+    setShowSuggestions(value.length >= 2 && suggestions.length > 0);
   };
 
   return (
@@ -40,11 +40,11 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
         <Input
           type="text"
-          placeholder="Enter a certification name (e.g., CompTIA Security+, CISSP, AWS)..."
+          placeholder="Enter a certification name (e.g., CompTIA Security+, CISSP, AWS, Okta)..."
           className="pl-10"
           value={certificationQuery}
           onChange={handleInputChange}
-          onFocus={() => setShowSuggestions(certificationQuery.length > 2 && suggestions.length > 0)}
+          onFocus={() => setShowSuggestions(certificationQuery.length >= 2 && suggestions.length > 0)}
           onBlur={() => {
             setTimeout(() => setShowSuggestions(false), 200);
           }}
