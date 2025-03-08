@@ -32,14 +32,18 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
     const value = e.target.value;
     setCertificationQuery(value);
     
-    // Show suggestions when typing at least 2 characters and we have suggestions
-    const hasSuggestions = getSimilarityCertifications(
-      value, 
-      validCertifications,
-      certificationNames
-    ).length > 0;
-    
-    setShowSuggestions(value.length >= 2 && hasSuggestions);
+    // Show suggestions when typing at least 2 characters
+    if (value.length >= 2) {
+      const matchingSuggestions = getSimilarityCertifications(
+        value, 
+        validCertifications,
+        certificationNames
+      );
+      
+      setShowSuggestions(matchingSuggestions.length > 0);
+    } else {
+      setShowSuggestions(false);
+    }
   };
 
   return (
@@ -48,23 +52,26 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
         <Input
           type="text"
-          placeholder="Enter a certification name (e.g., CompTIA Security+, CISSP, AWS, Okta)..."
+          placeholder="Enter a certification name (e.g., CompTIA Security+, CISSP, AWS, Okta Professional)..."
           className="pl-10"
           value={certificationQuery}
           onChange={handleInputChange}
           onFocus={() => {
-            const hasSuggestions = getSimilarityCertifications(
-              certificationQuery, 
-              validCertifications, 
-              certificationNames
-            ).length > 0;
-            setShowSuggestions(certificationQuery.length >= 2 && hasSuggestions);
+            if (certificationQuery.length >= 2) {
+              const matchingSuggestions = getSimilarityCertifications(
+                certificationQuery, 
+                validCertifications, 
+                certificationNames
+              );
+              setShowSuggestions(matchingSuggestions.length > 0);
+            }
           }}
           onBlur={() => {
+            // Delay hiding suggestions to allow clicking on them
             setTimeout(() => setShowSuggestions(false), 200);
           }}
         />
-        {showSuggestions && (
+        {showSuggestions && suggestions.length > 0 && (
           <div className="absolute z-10 mt-1 w-full bg-background border border-input rounded-md shadow-md">
             <ul className="py-1">
               {suggestions.map((certId) => (
@@ -72,6 +79,7 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
                   key={certId}
                   className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
                   onClick={() => handleSuggestionClick(certId)}
+                  onMouseDown={(e) => e.preventDefault()} // Prevent blur from hiding suggestion
                 >
                   {certificationNames[certId] || certId}
                 </li>
