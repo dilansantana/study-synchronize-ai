@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, X, Globe, Loader2 } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -43,7 +43,7 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
           certificationNames
         );
         
-        setShowSuggestions(matchingSuggestions.length > 0);
+        setShowSuggestions(matchingSuggestions && matchingSuggestions.length > 0);
       } catch (error) {
         console.error("Error getting suggestions:", error);
         setShowSuggestions(false);
@@ -76,7 +76,7 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
                   validCertifications, 
                   certificationNames
                 );
-                setShowSuggestions(matchingSuggestions.length > 0);
+                setShowSuggestions(matchingSuggestions && matchingSuggestions.length > 0);
               } catch (error) {
                 console.error("Error getting suggestions on focus:", error);
                 setShowSuggestions(false);
