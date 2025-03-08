@@ -20,15 +20,25 @@ const CertificationPathwayPage: React.FC = () => {
   const navigate = useNavigate();
 
   const suggestions = useMemo(() => {
-    const localSuggestions = getSimilarityCertifications(certificationQuery, validCertifications, certificationNames);
-    return localSuggestions;
+    if (certificationQuery.length < 2) return [];
+    
+    try {
+      const localSuggestions = getSimilarityCertifications(certificationQuery, validCertifications, certificationNames);
+      return localSuggestions || [];
+    } catch (error) {
+      console.error("Error generating suggestions:", error);
+      return [];
+    }
   }, [certificationQuery]);
 
   const allSuggestions = useMemo(() => {
+    if (!suggestions) return onlineResults.map(result => result.id);
+    if (!onlineResults || !onlineResults.length) return suggestions;
     return [...suggestions, ...onlineResults.map(result => result.id)];
   }, [suggestions, onlineResults]);
 
   const allCertificationNames = useMemo(() => {
+    if (!onlineResults || !onlineResults.length) return certificationNames;
     const online = Object.fromEntries(onlineResults.map(result => [result.id, result.name]));
     return { ...certificationNames, ...online };
   }, [onlineResults]);
@@ -41,7 +51,7 @@ const CertificationPathwayPage: React.FC = () => {
   const handleCertificationSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!certificationQuery.trim()) {
+    if (!certificationQuery || !certificationQuery.trim()) {
       toast({
         title: "Input required",
         description: "Please enter a certification to explore",
@@ -52,6 +62,7 @@ const CertificationPathwayPage: React.FC = () => {
     
     // Check if the search query matches any known certification directly
     const matchingCertId = validCertifications.find(certId => {
+      if (!certId) return false;
       const certName = certificationNames[certId] || certId;
       return certName.toLowerCase() === certificationQuery.toLowerCase() || 
              certId.toLowerCase() === certificationQuery.toLowerCase();
@@ -64,7 +75,7 @@ const CertificationPathwayPage: React.FC = () => {
       return;
     } 
     
-    if (suggestions.length > 0) {
+    if (suggestions && suggestions.length > 0) {
       // If we have suggestions, navigate to the first one
       console.log("Using first suggestion:", suggestions[0]);
       navigate(`/certification/${suggestions[0]}`);
@@ -80,9 +91,9 @@ const CertificationPathwayPage: React.FC = () => {
       });
       
       const results = await searchCertificationsOnline(certificationQuery);
-      setOnlineResults(results);
+      setOnlineResults(results || []);
       
-      if (results.length > 0) {
+      if (results && results.length > 0) {
         toast({
           title: "Online results found",
           description: `Found ${results.length} certification(s) from online sources.`,
@@ -110,10 +121,23 @@ const CertificationPathwayPage: React.FC = () => {
   };
 
   const handleSelectCertification = (certificationId: string) => {
+    if (!certificationId) {
+      console.error("Invalid certification ID:", certificationId);
+      toast({
+        title: "Error",
+        description: "Invalid certification selected.",
+        variant: "destructive"
+      });
+      return;
+    }
     navigate(`/certification/${certificationId}`);
   };
 
   const handleSuggestionClick = (certId: string) => {
+    if (!certId) {
+      console.error("Invalid certification ID from suggestion");
+      return;
+    }
     console.log("Suggestion clicked:", certId);
     setCertificationQuery(allCertificationNames[certId] || certId);
     setShowSuggestions(false);
@@ -146,7 +170,7 @@ const CertificationPathwayPage: React.FC = () => {
               setCertificationQuery={setCertificationQuery}
               validCertifications={validCertifications}
               certificationNames={allCertificationNames}
-              suggestions={allSuggestions}
+              suggestions={allSuggestions || []}
               showSuggestions={showSuggestions}
               setShowSuggestions={setShowSuggestions}
               handleCertificationSearch={handleCertificationSearch}

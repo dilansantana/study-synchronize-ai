@@ -36,13 +36,18 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
     
     // Show suggestions when typing at least 2 characters
     if (value.length >= 2) {
-      const matchingSuggestions = getSimilarityCertifications(
-        value, 
-        validCertifications,
-        certificationNames
-      );
-      
-      setShowSuggestions(matchingSuggestions.length > 0);
+      try {
+        const matchingSuggestions = getSimilarityCertifications(
+          value, 
+          validCertifications,
+          certificationNames
+        );
+        
+        setShowSuggestions(matchingSuggestions.length > 0);
+      } catch (error) {
+        console.error("Error getting suggestions:", error);
+        setShowSuggestions(false);
+      }
     } else {
       setShowSuggestions(false);
     }
@@ -65,12 +70,17 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
           onChange={handleInputChange}
           onFocus={() => {
             if (certificationQuery.length >= 2) {
-              const matchingSuggestions = getSimilarityCertifications(
-                certificationQuery, 
-                validCertifications, 
-                certificationNames
-              );
-              setShowSuggestions(matchingSuggestions.length > 0);
+              try {
+                const matchingSuggestions = getSimilarityCertifications(
+                  certificationQuery, 
+                  validCertifications, 
+                  certificationNames
+                );
+                setShowSuggestions(matchingSuggestions.length > 0);
+              } catch (error) {
+                console.error("Error getting suggestions on focus:", error);
+                setShowSuggestions(false);
+              }
             }
           }}
           onBlur={() => {
@@ -87,7 +97,7 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
             <X className="h-4 w-4" />
           </button>
         )}
-        {showSuggestions && suggestions.length > 0 && (
+        {showSuggestions && suggestions && suggestions.length > 0 && (
           <div className="absolute z-10 mt-1 w-full bg-background border border-input rounded-md shadow-md max-h-80 overflow-y-auto">
             <ul className="py-1">
               {suggestions.map((certId) => (
@@ -101,9 +111,9 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
                   }}
                   onMouseDown={(e) => e.preventDefault()} // Prevent blur from hiding suggestion
                 >
-                  {certId.startsWith('online-') && <Globe className="h-4 w-4 text-blue-500" />}
+                  {certId && certId.startsWith('online-') && <Globe className="h-4 w-4 text-blue-500" />}
                   {certificationNames[certId] || certId}
-                  {certId.startsWith('online-') && <span className="text-xs text-blue-500 ml-auto">Web Result</span>}
+                  {certId && certId.startsWith('online-') && <span className="text-xs text-blue-500 ml-auto">Web Result</span>}
                 </li>
               ))}
             </ul>

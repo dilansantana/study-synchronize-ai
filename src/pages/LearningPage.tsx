@@ -4,7 +4,7 @@ import Layout from '@/components/Layout';
 import ContentAggregator from '@/components/ContentAggregator';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen, FileText, GraduationCap, Trophy } from 'lucide-react';
+import { ArrowRight, BookOpen, FileText, GraduationCap, Trophy, Search } from 'lucide-react';
 import { popularCertifications } from '@/data/certificationData';
 import { Link } from 'react-router-dom';
 
@@ -100,10 +100,21 @@ const LearningPage: React.FC = () => {
         </div>
 
         <div className="mb-6 mt-12">
-          <h2 className="text-2xl font-bold">Popular IT Certifications</h2>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Trophy className="h-5 w-5 text-yellow-500" />
+            Popular IT Certifications
+          </h2>
           <p className="text-muted-foreground mt-1">
             Start studying for these in-demand certifications
           </p>
+          <div className="mt-4">
+            <Link to="/certification">
+              <Button variant="outline" className="flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Find More Certifications
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
