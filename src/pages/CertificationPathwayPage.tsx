@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { Certificate, Search } from 'lucide-react';
+import { Award, Search } from 'lucide-react';
 
 const CertificationPathwayPage: React.FC = () => {
   const [certificationQuery, setCertificationQuery] = useState('');
@@ -48,7 +48,7 @@ const CertificationPathwayPage: React.FC = () => {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Certificate className="h-7 w-7 text-primary" />
+            <Award className="h-7 w-7 text-primary" />
             Certification Pathway Explorer
           </h1>
           <p className="text-muted-foreground mt-1">
