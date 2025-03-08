@@ -1,10 +1,18 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { FileText, BookOpen, ExternalLink, Plus } from "lucide-react";
+import { FileText, BookOpen, ExternalLink, Plus, GraduationCap, Target, Clock } from "lucide-react";
 import { FlashcardCreationModal } from './FlashcardCreationModal';
 import { QuizCreationModal } from './QuizCreationModal';
 import { useToast } from '@/hooks/use-toast';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 interface GuideActionsProps {
   onCreateFlashcards: () => void;
@@ -47,24 +55,42 @@ export const GuideActions: React.FC<GuideActionsProps> = ({
 
   return (
     <div className="flex flex-wrap gap-2 mt-3">
-      <Button
-        onClick={() => setShowFlashcardModal(true)}
-        size="sm"
-        variant="outline"
-        className="h-9 gap-1.5"
-      >
-        <FileText className="h-4 w-4 text-orange-500" />
-        Create Flashcards
-      </Button>
-      <Button
-        onClick={() => setShowQuizModal(true)}
-        size="sm"
-        variant="outline"
-        className="h-9 gap-1.5"
-      >
-        <BookOpen className="h-4 w-4 text-purple-500" />
-        Create Quiz
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-9 gap-1.5"
+          >
+            <FileText className="h-4 w-4 text-orange-500" />
+            Study Options
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={() => setShowFlashcardModal(true)}>
+              <FileText className="h-4 w-4 text-orange-500 mr-2" />
+              <span>Create Flashcards</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowQuizModal(true)}>
+              <Target className="h-4 w-4 text-purple-500 mr-2" />
+              <span>Practice Quiz</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={() => setShowQuizModal(true)}>
+              <Clock className="h-4 w-4 text-blue-500 mr-2" />
+              <span>Timed Test</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowQuizModal(true)}>
+              <GraduationCap className="h-4 w-4 text-green-500 mr-2" />
+              <span>Exam Simulation</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       <Button
         onClick={onViewGuide}
         size="sm"
