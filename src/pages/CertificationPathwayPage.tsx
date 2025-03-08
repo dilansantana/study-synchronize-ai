@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Award } from 'lucide-react';
@@ -36,21 +35,18 @@ const CertificationPathwayPage: React.FC = () => {
     // Check if the search query matches any known certification directly
     const matchingCertId = validCertifications.find(certId => {
       const certName = certificationNames[certId] || certId;
-      return certName.toLowerCase().includes(certificationQuery.toLowerCase()) ||
-             certificationQuery.toLowerCase().includes(certId.toLowerCase());
+      return certName.toLowerCase() === certificationQuery.toLowerCase() || 
+             certId.toLowerCase() === certificationQuery.toLowerCase();
     });
     
     if (matchingCertId) {
-      // If we found a direct match, navigate to that certification
+      // Direct match found, navigate to that certification
+      console.log("Direct match found:", matchingCertId);
       navigate(`/certification/${matchingCertId}`);
     } else if (suggestions.length > 0) {
-      // If we have suggestions, show them and give a hint
-      setShowSuggestions(true);
-      toast({
-        title: "Did you mean...",
-        description: "We found similar certifications. Click on a suggestion below or try a different search.",
-        variant: "default"
-      });
+      // If we have suggestions, navigate to the first one
+      console.log("Using first suggestion:", suggestions[0]);
+      navigate(`/certification/${suggestions[0]}`);
     } else {
       // No matches and no suggestions
       toast({
@@ -66,8 +62,8 @@ const CertificationPathwayPage: React.FC = () => {
   };
 
   const handleSuggestionClick = (certId: string) => {
-    const certName = certificationNames[certId] || certId;
-    setCertificationQuery(certName);
+    console.log("Suggestion clicked:", certId);
+    setCertificationQuery(certificationNames[certId] || certId);
     setShowSuggestions(false);
     navigate(`/certification/${certId}`);
   };

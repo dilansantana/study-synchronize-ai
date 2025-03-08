@@ -68,7 +68,7 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
           }}
           onBlur={() => {
             // Delay hiding suggestions to allow clicking on them
-            setTimeout(() => setShowSuggestions(false), 200);
+            setTimeout(() => setShowSuggestions(false), 300);
           }}
         />
         {showSuggestions && suggestions.length > 0 && (
@@ -78,7 +78,11 @@ const CertificationSearch: React.FC<CertificationSearchProps> = ({
                 <li 
                   key={certId}
                   className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
-                  onClick={() => handleSuggestionClick(certId)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleSuggestionClick(certId);
+                  }}
                   onMouseDown={(e) => e.preventDefault()} // Prevent blur from hiding suggestion
                 >
                   {certificationNames[certId] || certId}

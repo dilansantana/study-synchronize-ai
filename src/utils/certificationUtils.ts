@@ -15,7 +15,7 @@ export const getSimilarityCertifications = (
     
     // Direct match in name - highest priority
     if (nameLower.includes(queryLower)) {
-      results.push([certId, 15]); // Even higher score for direct matches
+      results.push([certId, 20]); // Even higher score for direct matches
       continue;
     }
     
@@ -25,7 +25,7 @@ export const getSimilarityCertifications = (
     
     for (const brand of brandNames) {
       if (queryLower.includes(brand) && nameLower.includes(brand)) {
-        brandScore = 10; // Higher score for brand name matches
+        brandScore = 15; // Higher score for brand name matches
         break;
       }
     }
@@ -46,13 +46,13 @@ export const getSimilarityCertifications = (
       // Check if any name word contains the query word
       for (const nameWord of nameWords) {
         if (nameWord.includes(queryWord)) {
-          matchScore += 4; // Increased score for word inclusion
+          matchScore += 5; // Increased score for word inclusion
         }
         else if (nameWord.startsWith(queryWord) || queryWord.startsWith(nameWord)) {
-          matchScore += 3;
+          matchScore += 4;
         } 
         else if (nameWord.includes(queryWord.substring(0, 3)) && queryWord.length >= 3) {
-          matchScore += 2;
+          matchScore += 3;
         }
       }
     }
@@ -61,7 +61,7 @@ export const getSimilarityCertifications = (
     const certLevels = ["professional", "administrator", "associate", "practitioner", "specialist", "expert"];
     for (const level of certLevels) {
       if (queryLower.includes(level) && nameLower.includes(level)) {
-        matchScore += 5; // Boost score for matching certification levels
+        matchScore += 10; // Boost score for matching certification levels
       }
     }
     

@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { GraduationCap, BookOpen, BarChart, CreditCard, Calendar, Shield, CheckCircle, Award } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { EmptyResults } from '@/components/learning/EmptyResults';
+import { certificationNames } from '@/data/certificationData';
 
 interface CertificationInfo {
   name: string;
@@ -48,8 +49,9 @@ const CertificationDetailsPage: React.FC = () => {
   
   useEffect(() => {
     if (certificationId) {
+      console.log("Loading certification details for:", certificationId);
       let info: CertificationInfo = {
-        name: formatCertificationName(certificationId),
+        name: certificationNames[certificationId] || formatCertificationName(certificationId),
         duration: '60 - 90 days',
         difficulty: 'Intermediate',
         examCost: '$350 USD',
@@ -174,6 +176,30 @@ const CertificationDetailsPage: React.FC = () => {
           validity: '3 years (renewable through ECE credits)',
           isVerified: true
         };
+      } else if (certificationId.includes('okta')) {
+        if (certificationId.includes('professional')) {
+          info = {
+            ...info,
+            name: 'Okta Certified Professional',
+            examCost: '$125 USD',
+            examCode: 'OCP',
+            difficulty: 'Beginner to Intermediate',
+            passingScore: '70% or higher',
+            validity: '2 years',
+            isVerified: true
+          };
+        } else if (certificationId.includes('administrator')) {
+          info = {
+            ...info,
+            name: 'Okta Certified Administrator',
+            examCost: '$150 USD',
+            examCode: 'OCA',
+            difficulty: 'Intermediate',
+            passingScore: '70% or higher',
+            validity: '2 years',
+            isVerified: true
+          };
+        }
       }
       
       setCertificationInfo(info);
