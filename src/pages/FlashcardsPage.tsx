@@ -7,7 +7,6 @@ import { Plus, Bookmark, Users, History, Star } from 'lucide-react';
 import { FlashcardCreationModal } from '@/components/learning/FlashcardCreationModal';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { popularCertifications } from '@/data/certificationData';
 
@@ -15,7 +14,6 @@ const FlashcardsPage: React.FC = () => {
   const { toast } = useToast();
   const [showFlashcardModal, setShowFlashcardModal] = useState(false);
   const [selectedCertification, setSelectedCertification] = useState<string>("");
-  const [activeTab, setActiveTab] = useState("study");
   
   const certificationOptions = [
     { id: "general", name: "General Knowledge" },
@@ -48,11 +46,6 @@ const FlashcardsPage: React.FC = () => {
     const cert = popularCertifications.find(c => c.id === selectedCertification);
     return cert ? cert.name : undefined;
   };
-
-  useEffect(() => {
-    // When certification changes, switch back to study tab
-    setActiveTab("study");
-  }, [selectedCertification]);
 
   return (
     <Layout>
@@ -116,52 +109,11 @@ const FlashcardsPage: React.FC = () => {
           </div>
           
           <div className="md:col-span-3">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="study">Study</TabsTrigger>
-                <TabsTrigger value="test">Test</TabsTrigger>
-                <TabsTrigger value="match">Match</TabsTrigger>
-              </TabsList>
-              <TabsContent value="study" className="mt-4">
-                <InteractiveFlashcards 
-                  title={selectedCertification ? `${getCertificationName()} Flashcards` : "Study Flashcards"} 
-                  description={selectedCertification ? `Test your knowledge of ${getCertificationName()} concepts` : "Test your general IT knowledge"}
-                  certificationName={getCertificationName()}
-                />
-              </TabsContent>
-              <TabsContent value="test" className="mt-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Test Mode</CardTitle>
-                    <CardDescription>
-                      Test your knowledge with a quiz based on these flashcards
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex flex-col items-center p-12 text-center">
-                    <p className="text-muted-foreground mb-6">
-                      Create a quiz from your flashcards to test what you've learned.
-                    </p>
-                    <Button onClick={() => setActiveTab("study")}>Start Test</Button>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              <TabsContent value="match" className="mt-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Match Game</CardTitle>
-                    <CardDescription>
-                      Match terms with their definitions in a timed game
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex flex-col items-center p-12 text-center">
-                    <p className="text-muted-foreground mb-6">
-                      Test your memory by matching terms with their definitions against the clock.
-                    </p>
-                    <Button onClick={() => setActiveTab("study")}>Start Matching</Button>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+            <InteractiveFlashcards 
+              title={selectedCertification ? `${getCertificationName()} Flashcards` : "Study Flashcards"} 
+              description={selectedCertification ? `Test your knowledge of ${getCertificationName()} concepts` : "Test your general IT knowledge"}
+              certificationName={getCertificationName()}
+            />
           </div>
         </div>
       </div>
