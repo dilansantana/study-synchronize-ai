@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +13,6 @@ const CertificationPathwayPage: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Define a list of valid certification IDs
   const validCertifications = [
     'comptia-security-plus',
     'cisco-ccna',
@@ -25,7 +23,9 @@ const CertificationPathwayPage: React.FC = () => {
     'comptia-a-plus',
     'splunk',
     'cissp',
-    'ceh'
+    'ceh',
+    'okta-certified-professional',
+    'okta-certified-administrator'
   ];
 
   const certificationNames = {
@@ -38,7 +38,9 @@ const CertificationPathwayPage: React.FC = () => {
     'comptia-a-plus': 'CompTIA A+',
     'splunk': 'Splunk Certification',
     'cissp': 'CISSP (Certified Information Systems Security Professional)',
-    'ceh': 'Certified Ethical Hacker (CEH)'
+    'ceh': 'Certified Ethical Hacker (CEH)',
+    'okta-certified-professional': 'Okta Certified Professional',
+    'okta-certified-administrator': 'Okta Certified Administrator'
   };
 
   const popularCertifications = [
@@ -50,24 +52,21 @@ const CertificationPathwayPage: React.FC = () => {
     { id: 'pmp', name: 'Project Management Professional (PMP)', category: 'Management' },
   ];
 
-  // Create a fuzzy matching function to find similar certifications
   const getSimilarityCertifications = (query: string): string[] => {
     if (!query || query.length < 2) return [];
     
     const queryLower = query.toLowerCase();
-    const results: [string, number][] = []; // [certId, similarity score]
+    const results: [string, number][] = [];
     
     for (const certId of validCertifications) {
       const certName = certificationNames[certId as keyof typeof certificationNames] || certId;
       const nameLower = certName.toLowerCase();
       
-      // Check if query is included in certification name
       if (nameLower.includes(queryLower)) {
-        results.push([certId, 3]); // Highest match score for direct inclusion
+        results.push([certId, 3]);
         continue;
       }
       
-      // Check for similar words
       const queryWords = queryLower.split(/\s+/);
       const nameWords = nameLower.split(/\s+/);
       let matchScore = 0;
@@ -76,11 +75,9 @@ const CertificationPathwayPage: React.FC = () => {
         if (queryWord.length < 2) continue;
         
         for (const nameWord of nameWords) {
-          // Check if words start with same characters
           if (nameWord.startsWith(queryWord) || queryWord.startsWith(nameWord)) {
             matchScore += 2;
           } 
-          // Check for partial matches (at least 2 consecutive characters)
           else if (nameWord.includes(queryWord.substring(0, 2))) {
             matchScore += 1;
           }
@@ -92,14 +89,12 @@ const CertificationPathwayPage: React.FC = () => {
       }
     }
     
-    // Sort by score and return top 5 suggestions
     return results
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(item => item[0]);
   };
 
-  // Get suggestions based on current input
   const suggestions = useMemo(() => {
     return getSimilarityCertifications(certificationQuery);
   }, [certificationQuery]);
@@ -116,10 +111,8 @@ const CertificationPathwayPage: React.FC = () => {
       return;
     }
     
-    // Convert the query to a URL-friendly format
     const certificationId = certificationQuery.toLowerCase().replace(/\s+/g, '-');
     
-    // Check if this is a valid certification
     const isValidCertification = validCertifications.some(cert => 
       certificationId.includes(cert) || cert.includes(certificationId)
     );
@@ -127,7 +120,6 @@ const CertificationPathwayPage: React.FC = () => {
     if (isValidCertification) {
       navigate(`/certification/${certificationId}`);
     } else {
-      // Show suggestions if available
       if (suggestions.length > 0) {
         setShowSuggestions(true);
         toast({
@@ -192,7 +184,6 @@ const CertificationPathwayPage: React.FC = () => {
                   onChange={handleInputChange}
                   onFocus={() => setShowSuggestions(certificationQuery.length > 2 && suggestions.length > 0)}
                   onBlur={() => {
-                    // Delay hiding suggestions to allow for clicks
                     setTimeout(() => setShowSuggestions(false), 200);
                   }}
                 />
