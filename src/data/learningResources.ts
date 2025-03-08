@@ -1,13 +1,14 @@
 export interface ContentItem {
   id: string;
   title: string;
-  source: 'youtube' | 'article' | 'forum' | 'document' | 'quizlet';
+  source: 'youtube' | 'article' | 'forum' | 'document' | 'quizlet' | 'guide';
   description: string;
   url: string;
   duration?: string;
   author?: string;
   date?: string;
   rating?: number;
+  content?: string; // Added for storing extracted content
 }
 
 // Mock content items
@@ -178,3 +179,6 @@ export const additionalResources: Record<string, ContentItem[]> = {
     }
   ]
 };
+
+// Added ultimate guides section
+export const ultimateGuides: Record<string, ContentItem> = {};

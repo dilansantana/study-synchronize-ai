@@ -1,5 +1,5 @@
 import React from 'react';
-import { Youtube, FileText, MessageSquare, Globe, BookOpenCheck } from 'lucide-react';
+import { Youtube, FileText, MessageSquare, Globe, BookOpenCheck, Layers } from 'lucide-react';
 
 export const Clock = ({ className }: { className?: string }) => {
   return <div className={className}>
@@ -27,6 +27,15 @@ export const ArrowRight = ({ className }: { className?: string }) => {
   </div>;
 };
 
+export const ExtractIcon = ({ className }: { className?: string }) => {
+  return <div className={className}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  </div>;
+};
+
 export const getSourceIcon = (source: string) => {
   switch (source) {
     case 'youtube':
@@ -39,6 +48,8 @@ export const getSourceIcon = (source: string) => {
       return <FileText className="w-4 h-4 text-amber-500" />;
     case 'quizlet':
       return <BookOpenCheck className="w-4 h-4 text-purple-500" />;
+    case 'guide':
+      return <Layers className="w-4 h-4 text-emerald-500" />;
     default:
       return <Globe className="w-4 h-4 text-gray-500" />;
   }

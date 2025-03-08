@@ -12,9 +12,15 @@ interface ResourceCardProps {
   item: ContentItem;
   index: number;
   handleOpenResource: (item: ContentItem) => void;
+  onExtractResource?: (item: ContentItem) => void;
 }
 
-export const ResourceCard: React.FC<ResourceCardProps> = ({ item, index, handleOpenResource }) => {
+export const ResourceCard: React.FC<ResourceCardProps> = ({ 
+  item, 
+  index, 
+  handleOpenResource, 
+  onExtractResource 
+}) => {
   const navigate = useNavigate();
   
   const handleCreateStudyPlan = () => {
@@ -70,7 +76,7 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ item, index, handleO
               {item.date && <span>{formatDate(item.date)}</span>}
             </div>
             
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2 justify-end">
               <button 
                 onClick={() => handleOpenResource(item)}
                 className="inline-flex items-center text-sm font-medium text-primary hover:underline hover:bg-primary/10 px-2 py-1 rounded-md transition-colors"
@@ -78,6 +84,17 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ item, index, handleO
                 View Resource
                 <ArrowRight className="ml-1 h-3 w-3" />
               </button>
+              
+              {onExtractResource && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => onExtractResource(item)}
+                  className="text-xs"
+                >
+                  Extract Info
+                </Button>
+              )}
               
               <Button 
                 variant="outline" 

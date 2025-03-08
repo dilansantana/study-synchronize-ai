@@ -7,9 +7,14 @@ import { EmptyResults } from './EmptyResults';
 interface ResourceListProps {
   filteredContent: ContentItem[];
   handleOpenResource: (item: ContentItem) => void;
+  onExtractResource?: (item: ContentItem) => void;
 }
 
-export const ResourceList: React.FC<ResourceListProps> = ({ filteredContent, handleOpenResource }) => {
+export const ResourceList: React.FC<ResourceListProps> = ({ 
+  filteredContent, 
+  handleOpenResource,
+  onExtractResource
+}) => {
   return (
     <div className="space-y-4">
       {filteredContent.length > 0 ? (
@@ -18,7 +23,8 @@ export const ResourceList: React.FC<ResourceListProps> = ({ filteredContent, han
             key={item.id} 
             item={item} 
             index={index} 
-            handleOpenResource={handleOpenResource} 
+            handleOpenResource={handleOpenResource}
+            onExtractResource={onExtractResource}
           />
         ))
       ) : (
