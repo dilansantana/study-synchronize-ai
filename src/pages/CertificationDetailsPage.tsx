@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import { useUserProgress } from '@/utils/progressUtils';
 import { Badge } from "@/components/ui/badge";
 import { GraduationCap, BookOpen, BarChart, CreditCard, Calendar, Shield, CheckCircle, Award } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { EmptyResults } from '@/components/learning/EmptyResults';
 
 interface CertificationInfo {
   name: string;
@@ -26,11 +26,13 @@ interface CertificationInfo {
   examCode: string;
   passingScore: string;
   validity: string;
+  isVerified?: boolean;
 }
 
 const CertificationDetailsPage: React.FC = () => {
   const { certificationId } = useParams<{ certificationId: string }>();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const { addCertification } = useUserProgress();
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [certificationInfo, setCertificationInfo] = useState<CertificationInfo>({
@@ -40,11 +42,11 @@ const CertificationDetailsPage: React.FC = () => {
     examCost: '$350 USD',
     examCode: '',
     passingScore: '',
-    validity: '3 years'
+    validity: '3 years',
+    isVerified: false
   });
   
   useEffect(() => {
-    // Set certification details based on the certification ID
     if (certificationId) {
       let info: CertificationInfo = {
         name: formatCertificationName(certificationId),
@@ -53,10 +55,10 @@ const CertificationDetailsPage: React.FC = () => {
         examCost: '$350 USD',
         examCode: '',
         passingScore: '',
-        validity: '3 years'
+        validity: '3 years',
+        isVerified: false
       };
       
-      // Set specific details based on certification type
       if (certificationId.includes('comptia')) {
         if (certificationId.includes('security-plus')) {
           info = {
@@ -65,7 +67,8 @@ const CertificationDetailsPage: React.FC = () => {
             examCost: '$392 USD',
             examCode: 'SY0-601',
             passingScore: '750 on a scale of 100-900',
-            validity: '3 years (renewable through continuing education)'
+            validity: '3 years (renewable through continuing education)',
+            isVerified: true
           };
         } else if (certificationId.includes('network-plus')) {
           info = {
@@ -74,7 +77,8 @@ const CertificationDetailsPage: React.FC = () => {
             examCost: '$358 USD',
             examCode: 'N10-008',
             passingScore: '720 on a scale of 100-900',
-            validity: '3 years (renewable through continuing education)'
+            validity: '3 years (renewable through continuing education)',
+            isVerified: true
           };
         } else if (certificationId.includes('a-plus')) {
           info = {
@@ -83,7 +87,8 @@ const CertificationDetailsPage: React.FC = () => {
             examCost: '$239 USD per exam (2 exams required)',
             examCode: '220-1101 & 220-1102',
             passingScore: '675/700 on a scale of 100-900',
-            validity: '3 years (renewable through continuing education)'
+            validity: '3 years (renewable through continuing education)',
+            isVerified: true
           };
         }
       } else if (certificationId.includes('cisco') || certificationId.includes('ccna')) {
@@ -93,7 +98,8 @@ const CertificationDetailsPage: React.FC = () => {
           examCost: '$300 USD',
           examCode: '200-301',
           passingScore: '825 on a scale of 300-1000',
-          validity: '3 years (renewable through examination)'
+          validity: '3 years (renewable through examination)',
+          isVerified: true
         };
       } else if (certificationId.includes('aws')) {
         if (certificationId.includes('solutions-architect')) {
@@ -103,14 +109,16 @@ const CertificationDetailsPage: React.FC = () => {
             examCost: '$150 USD (Associate) / $300 USD (Professional)',
             examCode: 'SAA-C03 (Associate) / SAP-C02 (Professional)',
             passingScore: 'Scaled score of 720 out of 1000',
-            validity: '3 years (renewable through examination)'
+            validity: '3 years (renewable through examination)',
+            isVerified: true
           };
         } else {
           info = {
             ...info,
             name: 'AWS Certification',
             examCost: '$100-$300 USD (varies by level)',
-            validity: '3 years (renewable through examination)'
+            validity: '3 years (renewable through examination)',
+            isVerified: true
           };
         }
       } else if (certificationId.includes('microsoft') || certificationId.includes('azure')) {
@@ -120,7 +128,8 @@ const CertificationDetailsPage: React.FC = () => {
           examCost: '$165 USD',
           examCode: 'AZ-104',
           passingScore: '700 on a scale of 1-1000',
-          validity: 'Does not expire'
+          validity: 'Does not expire',
+          isVerified: true
         };
       } else if (certificationId.includes('pmp')) {
         info = {
@@ -129,7 +138,8 @@ const CertificationDetailsPage: React.FC = () => {
           examCost: '$405 USD (PMI member) / $555 USD (non-member)',
           examCode: 'PMP',
           passingScore: 'Performance-based (not a numerical score)',
-          validity: '3 years (renewable through PDUs)'
+          validity: '3 years (renewable through PDUs)',
+          isVerified: true
         };
       } else if (certificationId.includes('splunk')) {
         info = {
@@ -139,7 +149,8 @@ const CertificationDetailsPage: React.FC = () => {
           examCode: 'Varies by certification track',
           difficulty: 'Beginner to Advanced (depends on level)',
           passingScore: 'Typically 70-80%',
-          validity: '3 years'
+          validity: '3 years',
+          isVerified: true
         };
       } else if (certificationId.includes('cissp')) {
         info = {
@@ -149,7 +160,8 @@ const CertificationDetailsPage: React.FC = () => {
           examCode: 'CISSP',
           difficulty: 'Advanced',
           passingScore: 'Scaled score of 700 out of 1000',
-          validity: '3 years (renewable through CPEs)'
+          validity: '3 years (renewable through CPEs)',
+          isVerified: true
         };
       } else if (certificationId.includes('ceh')) {
         info = {
@@ -159,13 +171,23 @@ const CertificationDetailsPage: React.FC = () => {
           examCode: '312-50',
           difficulty: 'Intermediate to Advanced',
           passingScore: '70% or higher',
-          validity: '3 years (renewable through ECE credits)'
+          validity: '3 years (renewable through ECE credits)',
+          isVerified: true
         };
       }
       
       setCertificationInfo(info);
+      
+      if (!info.isVerified) {
+        toast({
+          title: "Certification not found",
+          description: "The certification you're looking for is not in our database. Please try a different one.",
+          variant: "destructive"
+        });
+        navigate('/certification');
+      }
     }
-  }, [certificationId]);
+  }, [certificationId, toast, navigate]);
   
   const formatCertificationName = (id: string): string => {
     return id
@@ -173,6 +195,17 @@ const CertificationDetailsPage: React.FC = () => {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   };
+  
+  if (!certificationInfo.isVerified) {
+    return (
+      <Layout>
+        <EmptyResults 
+          title="Certification Not Found" 
+          description="The certification you're looking for doesn't exist in our database. Please search for a valid certification."
+        />
+      </Layout>
+    );
+  }
   
   const resources = generateResourcesForCertification(certificationInfo.name);
   

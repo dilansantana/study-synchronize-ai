@@ -13,6 +13,20 @@ const CertificationPathwayPage: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  // Define a list of valid certification IDs
+  const validCertifications = [
+    'comptia-security-plus',
+    'cisco-ccna',
+    'aws-solutions-architect',
+    'microsoft-azure-administrator',
+    'comptia-network-plus',
+    'pmp',
+    'comptia-a-plus',
+    'splunk',
+    'cissp',
+    'ceh'
+  ];
+
   const popularCertifications = [
     { id: 'comptia-security-plus', name: 'CompTIA Security+', category: 'Security' },
     { id: 'cisco-ccna', name: 'Cisco CCNA', category: 'Networking' },
@@ -36,7 +50,21 @@ const CertificationPathwayPage: React.FC = () => {
     
     // Convert the query to a URL-friendly format
     const certificationId = certificationQuery.toLowerCase().replace(/\s+/g, '-');
-    navigate(`/certification/${certificationId}`);
+    
+    // Check if this is a valid certification
+    const isValidCertification = validCertifications.some(cert => 
+      certificationId.includes(cert) || cert.includes(certificationId)
+    );
+    
+    if (isValidCertification) {
+      navigate(`/certification/${certificationId}`);
+    } else {
+      toast({
+        title: "Certification not found",
+        description: "This certification isn't in our database yet. Please try another one or select from popular certifications below.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleSelectCertification = (certificationId: string) => {
