@@ -3,9 +3,12 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ContentItem } from "@/data/learningResources";
-import { FileText, BookOpen, ExternalLink, Lightbulb } from "lucide-react";
+import { FileText, BookOpen, ExternalLink, Lightbulb, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { optimizeContentWithGPT } from "@/utils/openAIUtils";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface GuidePreviewProps {
   generatedGuide: ContentItem | null;
@@ -23,67 +26,73 @@ export const GuidePreview: React.FC<GuidePreviewProps> = ({
   const { toast } = useToast();
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [optimizedContent, setOptimizedContent] = useState<string>('');
+  const [openAPIKeyDialog, setOpenAPIKeyDialog] = useState(false);
+  const [apiKey, setApiKey] = useState<string>('');
   
   if (!generatedGuide) return null;
   
   const handleOptimizeContent = async () => {
+    const storedApiKey = localStorage.getItem('openai_api_key');
+    
+    if (!storedApiKey) {
+      setOpenAPIKeyDialog(true);
+      return;
+    }
+    
+    await optimizeWithGPT();
+  };
+  
+  const optimizeWithGPT = async () => {
     setIsOptimizing(true);
     
     try {
-      // Simulate AI processing with a timeout (would connect to GPT or DeepSeek in production)
       toast({
-        title: "AI analysis in progress",
-        description: "Extracting the most relevant information from your guide..."
+        title: "GPT analysis in progress",
+        description: "Sending content to ChatGPT for optimization..."
       });
       
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Create summarized version with better formatting
-      const contentSections = generatedGuide.content.split('---');
-      let optimized = '# Key Takeaways from ' + generatedGuide.title + '\n\n';
-      
-      contentSections.forEach((section, index) => {
-        if (index === 0 || !section.trim()) return; // Skip intro or empty sections
-        
-        // Extract section title if it exists
-        const titleMatch = section.match(/## Section \d+: (.*?)(?:<a|$)/);
-        if (titleMatch && titleMatch[1]) {
-          optimized += `## ${titleMatch[1].trim()}\n\n`;
-          
-          // Extract bullet points and key information
-          const bulletPoints = section.match(/- .*?\n/g);
-          if (bulletPoints && bulletPoints.length) {
-            optimized += bulletPoints.join('');
-          } else {
-            // If no bullet points, extract a few sentences
-            const sentences = section.split(/\.\s+/).slice(0, 3);
-            optimized += sentences.map(s => s.trim() + '.\n').join('');
-          }
-          optimized += '\n';
-        }
-      });
-      
-      // Add conclusion
-      optimized += '\n## Summary\n';
-      optimized += 'These are the most important concepts extracted from your learning resources. ';
-      optimized += 'Use this focused summary for more efficient studying and quicker comprehension.\n';
+      const optimized = await optimizeContentWithGPT(
+        generatedGuide.content,
+        generatedGuide.title
+      );
       
       setOptimizedContent(optimized);
       
       toast({
-        title: "Optimization complete",
-        description: "The most relevant information has been extracted from your guide"
+        title: "Content optimized",
+        description: "ChatGPT has extracted the key information from your guide"
       });
     } catch (error) {
+      console.error("Error optimizing with OpenAI:", error);
       toast({
         title: "Optimization failed",
-        description: "Failed to extract relevant information",
+        description: error instanceof Error ? error.message : "Failed to extract key information with ChatGPT",
         variant: "destructive"
       });
-      console.error("Error optimizing content:", error);
     } finally {
       setIsOptimizing(false);
     }
+  };
+  
+  const saveApiKey = () => {
+    if (!apiKey.trim()) {
+      toast({
+        title: "API Key Required",
+        description: "Please enter your OpenAI API key",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    localStorage.setItem('openai_api_key', apiKey.trim());
+    setOpenAPIKeyDialog(false);
+    toast({
+      title: "API Key Saved",
+      description: "Your OpenAI API key has been saved to your browser"
+    });
+    
+    // Proceed with optimization
+    optimizeWithGPT();
   };
   
   const displayContent = optimizedContent || generatedGuide.content;
@@ -105,7 +114,7 @@ export const GuidePreview: React.FC<GuidePreviewProps> = ({
       <div className="border rounded-md p-4 bg-card">
         <div className="mb-2 flex items-center justify-between">
           <span className="text-sm font-medium">
-            {optimizedContent ? "Optimized Content" : "Generated Content"}
+            {optimizedContent ? "ChatGPT Optimized Content" : "Generated Content"}
           </span>
           <div className="flex items-center gap-2">
             {!optimizedContent && (
@@ -117,12 +126,12 @@ export const GuidePreview: React.FC<GuidePreviewProps> = ({
                 className="text-xs"
               >
                 <Lightbulb className="mr-1 h-3 w-3" />
-                {isOptimizing ? "Analyzing..." : "Extract Key Points"}
+                {isOptimizing ? "Processing with GPT..." : "Optimize with ChatGPT"}
               </Button>
             )}
             <span className="text-xs text-muted-foreground hidden sm:inline">
               {optimizedContent 
-                ? "AI-optimized for better readability" 
+                ? "Optimized by ChatGPT for better learning" 
                 : "Original extracted content"}
             </span>
           </div>
@@ -130,8 +139,9 @@ export const GuidePreview: React.FC<GuidePreviewProps> = ({
         
         {optimizedContent && (
           <Alert className="mb-4 bg-soft-blue border-blue-200">
-            <AlertDescription className="text-xs text-blue-800">
-              This content has been processed by AI to highlight the most important concepts and improve readability.
+            <AlertDescription className="text-xs text-blue-800 flex items-center">
+              <Info className="h-3 w-3 mr-1" />
+              This content has been optimized by ChatGPT to enhance readability and highlight key learning points.
             </AlertDescription>
           </Alert>
         )}
@@ -176,6 +186,38 @@ export const GuidePreview: React.FC<GuidePreviewProps> = ({
           View Full Guide
         </Button>
       </div>
+      
+      {/* API Key Dialog */}
+      <Dialog open={openAPIKeyDialog} onOpenChange={setOpenAPIKeyDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Enter OpenAI API Key</DialogTitle>
+            <DialogDescription>
+              Your API key is required to use ChatGPT for guide optimization. 
+              It will be stored in your browser and only used for this feature.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Input
+                id="apiKey"
+                placeholder="sk-..."
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                className="w-full"
+              />
+              <p className="text-xs text-muted-foreground">
+                You can get your API key from the <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary underline">OpenAI dashboard</a>
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenAPIKeyDialog(false)}>Cancel</Button>
+            <Button onClick={saveApiKey}>Save & Continue</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
+
