@@ -10,6 +10,7 @@ import { ResourceSelectionList } from './ResourceSelectionList';
 import { GenerationProgress } from './GenerationProgress';
 import { GuidePreview } from './GuidePreview';
 import { GuideNameInput } from './GuideNameInput';
+import { extractYouTubeVideoId, fetchYouTubeCaptions } from '@/utils/youtubeUtils';
 
 interface UltimateGuideGeneratorProps {
   availableResources: ContentItem[];
@@ -24,6 +25,7 @@ export const UltimateGuideGenerator: React.FC<UltimateGuideGeneratorProps> = ({ 
   const [progress, setProgress] = useState(0);
   const [generatedGuide, setGeneratedGuide] = useState<ContentItem | null>(null);
   const [activeTab, setActiveTab] = useState<string>('select');
+  const [captionsMap, setCaptionsMap] = useState<Record<string, string>>({});
 
   const handleResourceToggle = (id: string) => {
     setSelectedResources(prev => 
@@ -55,38 +57,91 @@ export const UltimateGuideGenerator: React.FC<UltimateGuideGeneratorProps> = ({ 
     setIsGenerating(true);
     setProgress(0);
 
-    // Simulate extraction process
-    for (let i = 1; i <= 10; i++) {
-      await new Promise(resolve => setTimeout(resolve, 300));
-      setProgress(i * 10);
+    try {
+      // Gather YouTube captions first
+      const selectedResourcesList = availableResources.filter(resource => selectedResources.includes(resource.id));
+      const youtubeResources = selectedResourcesList.filter(resource => resource.source === 'youtube');
+      
+      // Create a map to store captions for each YouTube resource
+      const captionsData: Record<string, string> = {};
+      
+      // Process each YouTube resource to fetch captions
+      const totalSteps = 10;
+      const youtubeStepsPercent = youtubeResources.length > 0 ? 40 : 0;
+      const remainingStepsPercent = 100 - youtubeStepsPercent;
+      
+      // Fetch captions for YouTube videos
+      if (youtubeResources.length > 0) {
+        for (let i = 0; i < youtubeResources.length; i++) {
+          const resource = youtubeResources[i];
+          const videoId = extractYouTubeVideoId(resource.url);
+          
+          if (videoId) {
+            // Update progress as we process each YouTube video
+            setProgress(Math.floor((i / youtubeResources.length) * youtubeStepsPercent));
+            
+            // Fetch captions
+            const captions = await fetchYouTubeCaptions(videoId);
+            if (captions) {
+              captionsData[resource.id] = captions;
+            }
+          }
+          
+          // Add a small delay to simulate processing
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
+      }
+      
+      // Store the captions map
+      setCaptionsMap(captionsData);
+      
+      // Simulate remaining extraction process
+      for (let i = 1; i <= totalSteps; i++) {
+        await new Promise(resolve => setTimeout(resolve, 300));
+        const progressPercent = youtubeStepsPercent + (i * (remainingStepsPercent / totalSteps));
+        setProgress(Math.min(progressPercent, 100));
+      }
+
+      // Create the new guide
+      const newGuide: ContentItem = {
+        id: `guide-${Date.now()}`,
+        title: guideName,
+        source: 'guide',
+        description: `Ultimate guide created from ${selectedResources.length} resources covering essential topics for ${guideName}.`,
+        url: '#',
+        date: new Date().toISOString().split('T')[0],
+        author: 'AI Assistant',
+        rating: 5.0,
+        content: generateMockContent(selectedResources, availableResources, captionsData)
+      };
+
+      // Store the guide
+      ultimateGuides[newGuide.id] = newGuide;
+      setGeneratedGuide(newGuide);
+      setActiveTab('preview');
+
+      toast({
+        title: "Guide generated",
+        description: `Successfully created "${guideName}" ultimate guide`
+      });
+    } catch (error) {
+      console.error('Error generating guide:', error);
+      toast({
+        title: "Generation failed",
+        description: "An error occurred while generating your guide.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+      setProgress(100);
     }
-
-    // Create the new guide
-    const newGuide: ContentItem = {
-      id: `guide-${Date.now()}`,
-      title: guideName,
-      source: 'guide',
-      description: `Ultimate guide created from ${selectedResources.length} resources covering essential topics for ${guideName}.`,
-      url: '#',
-      date: new Date().toISOString().split('T')[0],
-      author: 'AI Assistant',
-      rating: 5.0,
-      content: generateMockContent(selectedResources, availableResources)
-    };
-
-    // Store the guide
-    ultimateGuides[newGuide.id] = newGuide;
-    setGeneratedGuide(newGuide);
-    setIsGenerating(false);
-    setActiveTab('preview');
-
-    toast({
-      title: "Guide generated",
-      description: `Successfully created "${guideName}" ultimate guide`
-    });
   };
 
-  const generateMockContent = (resourceIds: string[], resources: ContentItem[]): string => {
+  const generateMockContent = (
+    resourceIds: string[], 
+    resources: ContentItem[], 
+    captionsData: Record<string, string>
+  ): string => {
     const selectedResourcesList = resources.filter(resource => resourceIds.includes(resource.id));
     
     let content = `# ${guideName} - Ultimate Study Guide\n\n`;
@@ -96,13 +151,21 @@ export const UltimateGuideGenerator: React.FC<UltimateGuideGeneratorProps> = ({ 
       content += `## Section ${index + 1}: ${resource.title}\n`;
       content += `Source: ${resource.source.toUpperCase()} | Author: ${resource.author || 'Unknown'}\n\n`;
       
-      // Generate mock extracted content based on resource type
+      // Generate content based on resource type
       switch (resource.source) {
         case 'youtube':
-          content += `Key points from this video:\n`;
-          content += `- Understanding core concepts of ${guideName} presented by ${resource.author}\n`;
-          content += `- Practical demonstrations of implementation techniques\n`;
-          content += `- Best practices for real-world scenarios\n`;
+          // Use the captions if available
+          if (captionsData[resource.id]) {
+            content += `Content extracted from YouTube captions:\n\n`;
+            content += captionsData[resource.id];
+            content += `\n\n`;
+          } else {
+            // Fallback if captions are not available
+            content += `Key points from this video:\n`;
+            content += `- Understanding core concepts of ${guideName} presented by ${resource.author}\n`;
+            content += `- Practical demonstrations of implementation techniques\n`;
+            content += `- Best practices for real-world scenarios\n`;
+          }
           break;
         case 'article':
         case 'document':
