@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { Award, Search } from 'lucide-react';
 
 const CertificationPathwayPage: React.FC = () => {
   const [certificationQuery, setCertificationQuery] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -27,6 +28,19 @@ const CertificationPathwayPage: React.FC = () => {
     'ceh'
   ];
 
+  const certificationNames = {
+    'comptia-security-plus': 'CompTIA Security+',
+    'cisco-ccna': 'Cisco CCNA',
+    'aws-solutions-architect': 'AWS Solutions Architect',
+    'microsoft-azure-administrator': 'Microsoft Azure Administrator',
+    'comptia-network-plus': 'CompTIA Network+',
+    'pmp': 'Project Management Professional (PMP)',
+    'comptia-a-plus': 'CompTIA A+',
+    'splunk': 'Splunk Certification',
+    'cissp': 'CISSP (Certified Information Systems Security Professional)',
+    'ceh': 'Certified Ethical Hacker (CEH)'
+  };
+
   const popularCertifications = [
     { id: 'comptia-security-plus', name: 'CompTIA Security+', category: 'Security' },
     { id: 'cisco-ccna', name: 'Cisco CCNA', category: 'Networking' },
@@ -35,6 +49,60 @@ const CertificationPathwayPage: React.FC = () => {
     { id: 'comptia-network-plus', name: 'CompTIA Network+', category: 'Networking' },
     { id: 'pmp', name: 'Project Management Professional (PMP)', category: 'Management' },
   ];
+
+  // Create a fuzzy matching function to find similar certifications
+  const getSimilarityCertifications = (query: string): string[] => {
+    if (!query || query.length < 2) return [];
+    
+    const queryLower = query.toLowerCase();
+    const results: [string, number][] = []; // [certId, similarity score]
+    
+    for (const certId of validCertifications) {
+      const certName = certificationNames[certId as keyof typeof certificationNames] || certId;
+      const nameLower = certName.toLowerCase();
+      
+      // Check if query is included in certification name
+      if (nameLower.includes(queryLower)) {
+        results.push([certId, 3]); // Highest match score for direct inclusion
+        continue;
+      }
+      
+      // Check for similar words
+      const queryWords = queryLower.split(/\s+/);
+      const nameWords = nameLower.split(/\s+/);
+      let matchScore = 0;
+      
+      for (const queryWord of queryWords) {
+        if (queryWord.length < 2) continue;
+        
+        for (const nameWord of nameWords) {
+          // Check if words start with same characters
+          if (nameWord.startsWith(queryWord) || queryWord.startsWith(nameWord)) {
+            matchScore += 2;
+          } 
+          // Check for partial matches (at least 2 consecutive characters)
+          else if (nameWord.includes(queryWord.substring(0, 2))) {
+            matchScore += 1;
+          }
+        }
+      }
+      
+      if (matchScore > 0) {
+        results.push([certId, matchScore]);
+      }
+    }
+    
+    // Sort by score and return top 5 suggestions
+    return results
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(item => item[0]);
+  };
+
+  // Get suggestions based on current input
+  const suggestions = useMemo(() => {
+    return getSimilarityCertifications(certificationQuery);
+  }, [certificationQuery]);
 
   const handleCertificationSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,16 +127,39 @@ const CertificationPathwayPage: React.FC = () => {
     if (isValidCertification) {
       navigate(`/certification/${certificationId}`);
     } else {
-      toast({
-        title: "Certification not found",
-        description: "This certification isn't in our database yet. Please try another one or select from popular certifications below.",
-        variant: "destructive"
-      });
+      // Show suggestions if available
+      if (suggestions.length > 0) {
+        setShowSuggestions(true);
+        toast({
+          title: "Did you mean...",
+          description: "We found similar certifications. Click on a suggestion below or try a different search.",
+          variant: "default"
+        });
+      } else {
+        toast({
+          title: "Certification not found",
+          description: "This certification isn't in our database yet. Please try another one or select from popular certifications below.",
+          variant: "destructive"
+        });
+      }
     }
   };
 
   const handleSelectCertification = (certificationId: string) => {
     navigate(`/certification/${certificationId}`);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCertificationQuery(value);
+    setShowSuggestions(value.length > 2 && suggestions.length > 0);
+  };
+
+  const handleSuggestionClick = (certId: string) => {
+    const certName = certificationNames[certId as keyof typeof certificationNames] || certId;
+    setCertificationQuery(certName);
+    setShowSuggestions(false);
+    navigate(`/certification/${certId}`);
   };
 
   return (
@@ -98,8 +189,28 @@ const CertificationPathwayPage: React.FC = () => {
                   placeholder="Enter a certification name (e.g., CompTIA Security+, CISSP, AWS)..."
                   className="pl-10"
                   value={certificationQuery}
-                  onChange={(e) => setCertificationQuery(e.target.value)}
+                  onChange={handleInputChange}
+                  onFocus={() => setShowSuggestions(certificationQuery.length > 2 && suggestions.length > 0)}
+                  onBlur={() => {
+                    // Delay hiding suggestions to allow for clicks
+                    setTimeout(() => setShowSuggestions(false), 200);
+                  }}
                 />
+                {showSuggestions && (
+                  <div className="absolute z-10 mt-1 w-full bg-background border border-input rounded-md shadow-md">
+                    <ul className="py-1">
+                      {suggestions.map((certId) => (
+                        <li 
+                          key={certId}
+                          className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                          onClick={() => handleSuggestionClick(certId)}
+                        >
+                          {certificationNames[certId as keyof typeof certificationNames] || certId}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
               <Button type="submit">Explore</Button>
             </form>
