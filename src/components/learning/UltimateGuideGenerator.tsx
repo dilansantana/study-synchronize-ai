@@ -105,14 +105,7 @@ export const UltimateGuideGenerator: React.FC<UltimateGuideGeneratorProps> = ({ 
         >
           Back
         </Button>
-        {activeTab === 'select' && (
-          <Button 
-            onClick={handleGenerateClick}
-            disabled={isGenerating || !guideName || selectedResources.length === 0}
-          >
-            {isGenerating ? "Extracting Information..." : "Generate Ultimate Guide"}
-          </Button>
-        )}
+        {/* Removed the duplicate Generate button since it's already in GuideGeneratorSelector */}
       </CardFooter>
     </Card>
   );
