@@ -1,17 +1,9 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import Layout from '@/components/Layout';
 import ContentAggregator from '@/components/ContentAggregator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import SavedGuides from '@/components/learning/SavedGuides';
 
 const LearningPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("resources");
-  
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
-  };
-
   return (
     <Layout>
       <div className="mb-6">
@@ -21,20 +13,7 @@ const LearningPage: React.FC = () => {
         </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6">
-          <TabsTrigger value="resources">Learning Resources</TabsTrigger>
-          <TabsTrigger value="guides">My Guides</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="resources">
-          <ContentAggregator />
-        </TabsContent>
-        
-        <TabsContent value="guides">
-          <SavedGuides />
-        </TabsContent>
-      </Tabs>
+      <ContentAggregator />
     </Layout>
   );
 };
