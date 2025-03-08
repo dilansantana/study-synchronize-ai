@@ -1,7 +1,13 @@
 
 import React from 'react';
-import { Filter, Globe, Youtube, FileText, MessageSquare, BookOpenCheck } from 'lucide-react';
+import { Filter, Globe, Youtube, FileText, MessageSquare, BookOpenCheck, ChevronDown } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export interface FilterOption {
   id: string;
@@ -24,28 +30,39 @@ export const ResourceFilters: React.FC<ResourceFiltersProps> = ({ activeFilter, 
     { id: 'quizlet', label: 'Flashcards', icon: <BookOpenCheck className="w-4 h-4" /> },
   ];
 
+  // Find the currently active filter
+  const activeFilterObj = activeFilter ? filters.find(f => f.id === activeFilter) : filters[0];
+
   return (
-    <div className="flex items-center space-x-2 overflow-x-auto pb-2 sm:pb-0">
-      <div className="flex items-center space-x-1 rounded-md bg-secondary px-2.5 py-1.5 text-sm font-medium text-foreground">
-        <Filter className="mr-1 h-4 w-4" />
-        <span>Filters:</span>
-      </div>
-      
-      {filters.map(filter => (
-        <button
-          key={filter.id}
-          onClick={() => setActiveFilter(activeFilter === filter.id ? null : filter.id)}
-          className={cn(
-            "flex items-center space-x-1 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors",
-            activeFilter === filter.id
-              ? "bg-primary text-primary-foreground"
-              : "bg-secondary text-foreground hover:bg-secondary/80"
-          )}
-        >
-          {filter.icon}
-          <span>{filter.label}</span>
-        </button>
-      ))}
+    <div className="flex items-center">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="flex items-center gap-2 rounded-md bg-secondary px-2.5 py-1.5 text-sm font-medium text-foreground">
+            <Filter className="h-4 w-4" />
+            <span className="hidden sm:inline">Filter:</span>
+            <span className="flex items-center gap-1.5">
+              {activeFilterObj?.icon}
+              <span>{activeFilterObj?.label || 'All Sources'}</span>
+            </span>
+            <ChevronDown className="h-4 w-4 ml-1" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          {filters.map(filter => (
+            <DropdownMenuItem
+              key={filter.id}
+              onClick={() => setActiveFilter(filter.id === 'all' ? null : filter.id)}
+              className={cn(
+                "flex items-center gap-2",
+                activeFilter === filter.id && "bg-primary/10"
+              )}
+            >
+              {filter.icon}
+              <span>{filter.label}</span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };
