@@ -5,7 +5,7 @@ import Layout from '@/components/Layout';
 import QuizComponent from '@/components/QuizComponent';
 import { QuizCreationModal } from '@/components/learning/QuizCreationModal';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus } from 'lucide-react';
 import { popularCertifications } from '@/data/certificationData';
@@ -78,10 +78,6 @@ const QuizPage: React.FC = () => {
               {quizParams ? `Test your knowledge with a ${quizParams.count}-question quiz` : "Create and take quizzes to test your knowledge"}
             </p>
           </div>
-          <Button onClick={() => setShowQuizModal(true)} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Create Quiz
-          </Button>
         </div>
 
         {!quizParams && (
@@ -92,7 +88,7 @@ const QuizPage: React.FC = () => {
                 Select a certification to focus your quiz or leave blank for general knowledge
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <Select value={selectedCertification} onValueChange={handleCertificationChange}>
                 <SelectTrigger className="w-full md:w-[300px]">
                   <SelectValue placeholder="Select certification or leave blank" />
@@ -105,6 +101,11 @@ const QuizPage: React.FC = () => {
                   ))}
                 </SelectContent>
               </Select>
+              
+              <Button onClick={() => setShowQuizModal(true)} className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Create Quiz
+              </Button>
             </CardContent>
           </Card>
         )}
