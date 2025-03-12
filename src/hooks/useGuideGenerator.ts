@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ContentItem, ultimateGuides } from "@/data/learningResources";
 import { useToast } from "@/hooks/use-toast";
@@ -15,13 +14,10 @@ export const useGuideGenerator = () => {
   const extractContentFromResource = (resource: ContentItem, guideName: string): string => {
     let extractedInfo = '';
     
-    // If we already have YouTube captions, use those
     if (resource.source === 'youtube' && captionsMap[resource.id]) {
-      // Extract the most important parts from captions (simplified for demo)
       const captions = captionsMap[resource.id];
       const sentences = captions.split(/[.!?]+/).filter(Boolean);
       
-      // Get "important" sentences (every 5th sentence for demo purposes)
       const importantSentences = sentences.filter((_, index) => index % 5 === 0 || index < 5);
       extractedInfo = importantSentences.join('. ');
       
@@ -32,7 +28,6 @@ export const useGuideGenerator = () => {
       return `### Key Points from Video:\n${extractedInfo}\n\n`;
     }
     
-    // Handle different resource types
     switch (resource.source) {
       case 'youtube':
         return `### Key Video Concepts:\n- Understanding core concepts presented by ${resource.author || 'the instructor'}\n- Visual demonstrations of practical implementation\n- Step-by-step tutorial approach for learning ${guideName}\n\n`;
@@ -130,7 +125,6 @@ export const useGuideGenerator = () => {
       const captionsData: Record<string, string> = {};
       const extractedData: Record<string, string> = {};
       
-      // Phase 1: Extract YouTube captions (0-40%)
       if (youtubeResources.length > 0) {
         for (let i = 0; i < youtubeResources.length; i++) {
           const resource = youtubeResources[i];
@@ -156,7 +150,6 @@ export const useGuideGenerator = () => {
       
       setCaptionsMap(captionsData);
       
-      // Phase 2: Extract content from all resources (40-70%)
       for (let i = 0; i < selectedResourcesList.length; i++) {
         const resource = selectedResourcesList[i];
         const progressPercent = 30 + Math.floor((i / selectedResourcesList.length) * 40);
@@ -176,15 +169,16 @@ export const useGuideGenerator = () => {
       
       setExtractedContent(extractedData);
       
-      // Phase 3: Compile guide (70-100%)
       for (let i = 1; i <= 6; i++) {
         await new Promise(resolve => setTimeout(resolve, 300));
         const progressPercent = 70 + (i * 5);
         setProgress(Math.min(progressPercent, 100));
       }
 
+      const guideId = `guide-${Date.now()}`;
+      
       const newGuide: ContentItem = {
-        id: `guide-${Date.now()}`,
+        id: guideId,
         title: guideName,
         source: 'guide',
         description: `Ultimate guide created from ${selectedResources.length} resources covering essential topics for ${guideName}.`,
@@ -195,7 +189,12 @@ export const useGuideGenerator = () => {
         content: generateGuideContent(selectedResourcesList, extractedData, guideName)
       };
 
-      ultimateGuides[newGuide.id] = newGuide;
+      if (!ultimateGuides) {
+        console.error('ultimateGuides is undefined');
+      } else {
+        ultimateGuides[guideId] = newGuide;
+      }
+      
       setGeneratedGuide(newGuide);
       
       toast({

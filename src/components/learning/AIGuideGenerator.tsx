@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,7 +34,7 @@ const AIGuideGenerator: React.FC = () => {
 
     const storedApiKey = localStorage.getItem('openai_api_key');
     
-    if (!storedApiKey) {
+    if (!storedApiKey && !apiKey) {
       setOpenAPIKeyDialog(true);
       return;
     }
@@ -45,7 +44,6 @@ const AIGuideGenerator: React.FC = () => {
     setApiError(null);
     
     try {
-      // Simulate progress
       const progressInterval = setInterval(() => {
         setProgress(prev => {
           const newProgress = prev + 5;
@@ -53,7 +51,6 @@ const AIGuideGenerator: React.FC = () => {
         });
       }, 1000);
 
-      // Prepare the prompt for the AI
       const prompt = `Generate a comprehensive ultimate study guide about "${topic}".
       ${additionalInfo ? `Consider the following additional information: ${additionalInfo}` : ''}
       
@@ -72,7 +69,6 @@ const AIGuideGenerator: React.FC = () => {
       });
       
       try {
-        // Generate content using OpenAI
         const generatedContent = await optimizeContentWithGPT(prompt, topic);
         clearInterval(progressInterval);
         createAndSaveGuide(generatedContent);
@@ -80,12 +76,11 @@ const AIGuideGenerator: React.FC = () => {
         clearInterval(progressInterval);
         console.error('Error optimizing content with GPT:', error);
         
-        // Check for quota exceeded error
         if (error instanceof Error && error.message.includes("quota")) {
           setApiError("OpenAI API quota exceeded. Using fallback method to generate guide.");
           generateFallbackGuide();
         } else {
-          throw error; // Re-throw other errors
+          throw error;
         }
       }
     } catch (error) {
@@ -101,7 +96,6 @@ const AIGuideGenerator: React.FC = () => {
   };
 
   const generateFallbackGuide = () => {
-    // Create a basic template as fallback
     const fallbackContent = `# Ultimate Guide to ${topic}
 
 ## Introduction
@@ -135,9 +129,10 @@ This is an auto-generated guide about ${topic}. ${additionalInfo ? `With a focus
   };
 
   const createAndSaveGuide = (content: string) => {
-    // Create a new guide
+    const guideId = `guide-${Date.now()}`;
+    
     const newGuide: ContentItem = {
-      id: `guide-${Date.now()}`,
+      id: guideId,
       title: `AI-Generated Guide: ${topic}`,
       source: 'guide',
       description: `AI-generated ultimate guide covering essential topics for ${topic}.`,
@@ -148,18 +143,18 @@ This is an auto-generated guide about ${topic}. ${additionalInfo ? `With a focus
       content: content
     };
 
-    // Save the guide
-    ultimateGuides[newGuide.id] = newGuide;
+    ultimateGuides[guideId] = newGuide;
     
-    toast({
-      title: "Guide generated successfully",
-      description: `Your guide on "${topic}" is now ready to view.`
-    });
-    
-    // Navigate to the new guide
-    navigate(`/guide/${newGuide.id}`);
-    setIsGenerating(false);
-    setProgress(0);
+    setTimeout(() => {
+      toast({
+        title: "Guide generated successfully",
+        description: `Your guide on "${topic}" is now ready to view.`
+      });
+      
+      navigate(`/guide/${guideId}`);
+      setIsGenerating(false);
+      setProgress(0);
+    }, 100);
   };
 
   const saveApiKey = () => {
@@ -170,7 +165,6 @@ This is an auto-generated guide about ${topic}. ${additionalInfo ? `With a focus
       description: "Your OpenAI API key has been saved to your browser"
     });
     
-    // Proceed with guide generation
     generateGuide();
   };
 

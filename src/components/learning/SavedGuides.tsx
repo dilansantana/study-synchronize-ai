@@ -20,7 +20,7 @@ const SavedGuides: React.FC = () => {
     return (
       <EmptyResults
         title="No guides found"
-        description="You haven't created any ultimate guides yet. Go to Learning Resources to create your first guide."
+        description="You haven't created any ultimate guides yet. Go to the 'Generate with AI' tab to create your first guide."
         icon={<BookOpen className="h-12 w-12 text-muted-foreground" />}
       />
     );
